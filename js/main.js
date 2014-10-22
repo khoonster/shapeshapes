@@ -13,20 +13,18 @@ function Grid(options) {
     this.offset(view.size.width),
     this.offset(view.size.height)
   );
-  this.lines = []
+  this.horizontal_lines = []
+  this.vertical_lines = []
   this.draw(view.size.width, view.size.height);
 }
 
 Grid.prototype.draw = function(width, height) {
-  vertical_count = this.lines_within(width);
-  horizontal_count = this.lines_within(height);
-  
-  for (var i=0; i <= vertical_count; i++) {
-    this.lines.push(this.make_vertical_line(i * this.grid_space / this.subdivisions))
+  for (var i=0; i <= this.lines_within(height); i++) {
+    this.horizontal_lines.push(this.make_horizontal_line(i * this.grid_space / this.subdivisions))
   };
-
-  for (var i=0; i <= horizontal_count; i++) {
-    this.lines.push(this.make_horizontal_line(i * this.grid_space / this.subdivisions))
+  
+  for (var i=0; i <= this.lines_within(width); i++) {
+    this.vertical_lines.push(this.make_vertical_line(i * this.grid_space / this.subdivisions))
   };
 }
 
