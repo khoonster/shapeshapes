@@ -1,0 +1,24 @@
+{
+  "name": "khoonster.github.io",
+  "version": "0.0.0",
+  "description": "khoonster.com",
+  "main": "gulpfile.js",
+  "dependencies": {
+    "gulp": "^3.8.9",
+    "main-bower-files": "~2.1.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/khoonster/khoonster.github.io.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/khoonster/khoonster.github.io/issues"
+  },
+  "homepage": "https://github.com/khoonster/khoonster.github.io"
+}
