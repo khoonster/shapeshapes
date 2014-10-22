@@ -1,5 +1,6 @@
 var padding = 60;
 var grid_space = 40;
+var overhang = 10;
 var vertical_count = lines_within(view.size.width);
 var horizontal_count = lines_within(view.size.height);
 
@@ -16,18 +17,31 @@ function lines_within(size) {
 }
 
 function make_vertical_line(x) {
-  return make_line(x, 0);
+  return make_line(vertical_bounds(x));
 }
 
 function make_horizontal_line(y) {
-  return make_line(0, y);
+  return make_line(horizontal_bounds(y));
 }
 
-function make_line(x, y) {
-  console.log(x, y)
-  return new Path.Rectangle({
-    from: [padding + x, padding + y],
-    to: [view.size.width - padding + x, view.size.height - padding + y],
+function horizontal_bounds(y) {
+  return [
+    new Point(padding - overhang, padding + y),
+    new Point(view.size.width - padding + overhang, padding + y),
+  ]
+}
+
+function vertical_bounds(x) {
+  return [
+    new Point(padding + x, padding - overhang),
+    new Point(padding + x, view.size.height - padding + overhang),
+  ]
+}
+
+function make_line(bounds) {
+  return new Path.Line({
+    from: bounds[0],
+    to: bounds[1],
     strokeColor: 'white',
     strokeWidth: 2
   });
