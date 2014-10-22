@@ -1,0 +1,20 @@
+{
+  "name": "khoonster.github.io",
+  "version": "0.0.0",
+  "homepage": "https://github.com/khoonster/khoonster.github.io",
+  "authors": [
+    "Jack Jennings <j@ckjennin.gs>"
+  ],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "paper": "~0.9.20"
+  }
+}
