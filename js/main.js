@@ -1,63 +1,80 @@
-var grid_space = 40;
-var overhang = 10;
-var subdivisions = 2;
-var padding = 60;
-var vertical_count = lines_within(view.size.width);
-var horizontal_count = lines_within(view.size.height);
-
-for (var i=0; i <= vertical_count; i++) {
-  make_vertical_line(i * grid_space / subdivisions)
-};
-
-for (var i=0; i <= horizontal_count; i++) {
-  make_horizontal_line(i * grid_space / subdivisions)
-};
-
-function lines_within(l) {
-  return Math.floor(grid_size(l) / grid_space * subdivisions);
+function LineBounds(from, to, offset) {
+  var offset = new Point(offset);
+  this.from = new Point(from) + offset;
+  this.to = new Point(to) + offset;
 }
 
-function grid_size(l) {
-  return maximum_edge(l) - padding;
+function Grid(options) {
+  this.grid_space = 40;
+  this.overhang = 10;
+  this.subdivisions = 2;
+  this.padding = 60;
+  this.offset_point = new Point(
+    this.offset(view.size.width),
+    this.offset(view.size.height)
+  );
+  this.lines = []
+  this.draw(view.size.width, view.size.height);
 }
 
-function grid_offset(l) {
-  return Math.floor(((l - padding * 2) % grid_space) / 2);
+Grid.prototype.draw = function(width, height) {
+  vertical_count = this.lines_within(width);
+  horizontal_count = this.lines_within(height);
+  
+  for (var i=0; i <= vertical_count; i++) {
+    this.lines.push(this.make_vertical_line(i * this.grid_space / this.subdivisions))
+  };
+
+  for (var i=0; i <= horizontal_count; i++) {
+    this.lines.push(this.make_horizontal_line(i * this.grid_space / this.subdivisions))
+  };
 }
 
-function make_vertical_line(x) {
-  return make_line(vertical_bounds(x), stroke_width(x));
+Grid.prototype.make_vertical_line = function(x) {
+  return this.make_line(this.vertical_bounds(x), this.stroke_width(x));
 }
 
-function make_horizontal_line(y) {
-  return make_line(horizontal_bounds(y), stroke_width(y));
+Grid.prototype.make_horizontal_line = function(y) {
+  return this.make_line(this.horizontal_bounds(y), this.stroke_width(y));
 }
 
-function stroke_width(n) {
-  if (n % grid_space) {
+Grid.prototype.lines_within = function(l) {
+  return Math.floor(this.size(l) / this.grid_space * this.subdivisions);
+}
+
+Grid.prototype.size = function(l) {
+  return this.maximum_edge(l) - this.padding;
+}
+
+Grid.prototype.offset = function(l) {
+  return Math.floor(((l - this.padding * 2) % this.grid_space) / 2);
+}
+
+Grid.prototype.stroke_width = function(n) {
+  if (n % this.grid_space) {
     return 1
   } else {
     return 2
   }
 }
 
-function horizontal_bounds(y) {
-  var from = new Point(padding - overhang, padding + y);
-  var to = new Point(maximum_edge(view.size.width) + overhang, padding + y);
-  return new LineBounds(from, to)
+Grid.prototype.horizontal_bounds = function(y) {
+  var from = new Point(this.padding - this.overhang, this.padding + y);
+  var to = new Point(this.maximum_edge(view.size.width) + this.overhang, this.padding + y);
+  return new LineBounds(from, to, this.offset_point);
 }
 
-function vertical_bounds(x) {
-  var from = new Point(padding + x, padding - overhang);
-  var to = new Point(padding + x, maximum_edge(view.size.height) + overhang);
-  return new LineBounds(from, to);
+Grid.prototype.vertical_bounds = function(x) {
+  var from = new Point(this.padding + x, this.padding - this.overhang);
+  var to = new Point(this.padding + x, this.maximum_edge(view.size.height) + this.overhang);
+  return new LineBounds(from, to, this.offset_point);
 }
 
-function maximum_edge(length) {
-  return length - padding - length % grid_space
+Grid.prototype.maximum_edge = function(length) {
+  return length - this.padding - length % this.grid_space
 }
 
-function make_line(bounds, strokeWidth) {
+Grid.prototype.make_line = function(bounds, strokeWidth) {
   return new Path.Line({
     from: bounds.from,
     to: bounds.to,
@@ -66,12 +83,4 @@ function make_line(bounds, strokeWidth) {
   });
 }
 
-function LineBounds(from, to) {
-  var offset = new Point(
-    grid_offset(view.size.width),
-    grid_offset(view.size.height)
-  );
-
-  this.from = new Point(from) + offset;
-  this.to = new Point(to) + offset;
-}
+var grid = new Grid();
