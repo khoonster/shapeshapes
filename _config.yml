@@ -14,3 +14,5 @@ exclude:
   - Gemfile*
   - LICENSE
   - README*
+  - gulpfile.js
+  - package.json
