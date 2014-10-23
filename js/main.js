@@ -1,7 +1,7 @@
 function Grid(options) {
-  this.grid_space = 40;
-  this.overhang = 10;
-  this.subdivisions = 2;
+  this.grid_space = options.grid_space;
+  this.overhang = options.overhang;
+  this.subdivisions = options.subdivisions;
   this.padding = 60;
   this.horizontal_lines = []
   this.vertical_lines = []
@@ -87,4 +87,8 @@ LineBounds.prototype.add = function(point) {
   return this;
 }
 
-var grid = new Grid();
+var grid = new Grid({
+  grid_space: 40,
+  overhang: 10,
+  subdivisions: 2
+});
