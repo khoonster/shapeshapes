@@ -1,24 +1,33 @@
-function Grid(options) {
+function Grid(size, options) {
   this.grid_space = options.grid_space;
   this.overhang = options.overhang;
   this.subdivisions = options.subdivisions;
-  this.padding = 60;
+  this.padding = options.padding;
   this.horizontal_lines = []
   this.vertical_lines = []
-  this.draw(view.size.width, view.size.height);
+  this.draw(size);
 }
 
-Grid.prototype.draw = function(width, height) {
-  this.offset_point = new Point(this.offset(width), this.offset(height));
-  this.draw_lines('horizontal_lines', 'make_horizontal_line', height);
-  this.draw_lines('vertical_lines', 'make_vertical_line', width);
+Grid.prototype.draw = function(size) {
+  this.width = size.width;
+  this.height = size.height;
+  this.offset_point = new Point(this.offset(this.width), this.offset(this.height));
+  this.draw_lines('horizontal_lines', 'make_horizontal_line', this.height);
+  this.draw_lines('vertical_lines', 'make_vertical_line', this.width);
 }
 
 Grid.prototype.draw_lines = function(set, func, size) {
   var count = this.lines_within(size);
   
-  for (var i=this[set].length; i <= count; i++) {
-    this[set].push(this[func](i * this.grid_space / this.subdivisions));
+  for (var i=0; i < this[set].length; i++) {
+    if (typeof this[set][i] !== "undefined") {
+      this[set][i].remove();
+      delete this[set][i];
+    };
+  };
+  
+  for (var i=0; i <= count; i++) {
+    this[set][i] = this[func](i * this.grid_space / this.subdivisions);
   };
 }
 
@@ -51,14 +60,20 @@ Grid.prototype.stroke_width = function(n) {
 }
 
 Grid.prototype.horizontal_bounds = function(y) {
-  var from = new Point(this.padding - this.overhang, this.padding + y);
-  var to = new Point(this.maximum_edge(view.size.width) + this.overhang, this.padding + y);
+  var top = this.padding + y,
+      left = this.padding - this.overhang,
+      right = this.maximum_edge(this.width) + this.overhang,
+      from = new Point(left, top),
+      to = new Point(right, top);
   return new LineBounds(from, to).add(this.offset_point);
 }
 
 Grid.prototype.vertical_bounds = function(x) {
-  var from = new Point(this.padding + x, this.padding - this.overhang);
-  var to = new Point(this.padding + x, this.maximum_edge(view.size.height) + this.overhang);
+  var left = this.padding + x,
+      top = this.padding - this.overhang,
+      bottom = this.maximum_edge(this.height) + this.overhang,
+      from = new Point(left, top),
+      to = new Point(left, bottom);
   return new LineBounds(from, to).add(this.offset_point);
 }
 
@@ -87,8 +102,13 @@ LineBounds.prototype.add = function(point) {
   return this;
 }
 
-var grid = new Grid({
+var grid = new Grid(view.size, {
   grid_space: 40,
   overhang: 10,
-  subdivisions: 2
+  subdivisions: 2,
+  padding: 60
 });
+
+function onResize(event) {
+  grid.draw(view.size)
+}
