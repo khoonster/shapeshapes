@@ -104,7 +104,7 @@ LineBounds.prototype.add = function(point) {
 
 var grid = new Grid(view.size, {
   grid_space: 40,
-  overhang: 10,
+  overhang: 15,
   subdivisions: 2,
   padding: 60
 });
