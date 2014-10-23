@@ -22,7 +22,7 @@ gulp.task('paper', function() {
 })
 
 gulp.task('watch', function() {
-  gulp.watch(sources.paper, 'paper');
+  gulp.watch(sources.paper, ['paper']);
 })
 
 gulp.task('default', ['vendor', 'paper', 'watch'])
