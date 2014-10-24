@@ -3,8 +3,6 @@ function Grid(size, options) {
   this.overhang = options.overhang;
   this.subdivisions = options.subdivisions;
   this.padding = options.padding;
-  this.horizontal_lines = []
-  this.vertical_lines = []
   this.draw(size);
 }
 
@@ -18,14 +16,18 @@ Grid.prototype.draw = function(size) {
 
 Grid.prototype.draw_lines = function(set, func, size) {
   var count = this.lines_within(size);
-  
+
+  if (typeof this[set] === "undefined") {
+    this[set] = [];
+  };
+
   for (var i=0; i < this[set].length; i++) {
     if (typeof this[set][i] !== "undefined") {
       this[set][i].remove();
       delete this[set][i];
     };
   };
-  
+
   for (var i=0; i <= count; i++) {
     this[set][i] = this[func](i * this.grid_space / this.subdivisions);
   };
