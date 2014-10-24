@@ -10,8 +10,5 @@ function ShapePresenter(container, size) {
 ShapePresenter.prototype.draw = function(view) {
   for (var i=0; i < this.shapes.length; i++) {
     var shape = this.shapes[i];
-    shape.remove()
-    shape.position = view.center;
-    project.activeLayer.addChild(shape);
   };
 }

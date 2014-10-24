@@ -18,18 +18,18 @@ Grid.prototype.draw_lines = function(set, func, size) {
   var count = this.lines_within(size);
 
   if (typeof this[set] === "undefined") {
-    this[set] = [];
+    this[set] = new Group();
   };
 
-  for (var i=0; i < this[set].length; i++) {
-    if (typeof this[set][i] !== "undefined") {
-      this[set][i].remove();
-      delete this[set][i];
+  for (var i=0; i < this[set].children.length; i++) {
+    if (typeof this[set].children[i] !== "undefined") {
+      this[set].removeChildren(i);
     };
   };
 
   for (var i=0; i <= count; i++) {
-    this[set][i] = this[func](i * this.grid_space / this.subdivisions);
+    var line = this[func](i * this.grid_space / this.subdivisions);
+    this[set].insertChild(i, line);
   };
 }
 
@@ -116,9 +116,6 @@ function ShapePresenter(container, size) {
 ShapePresenter.prototype.draw = function(view) {
   for (var i=0; i < this.shapes.length; i++) {
     var shape = this.shapes[i];
-    shape.remove()
-    shape.position = view.center;
-    project.activeLayer.addChild(shape);
   };
 }
 
