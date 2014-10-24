@@ -104,7 +104,23 @@ LineBounds.prototype.add = function(point) {
   return this;
 }
 
-var shape = project.importSVG(document.getElementById('foo'));
+function ShapePresenter(container, size) {
+  var svgs = container.children;
+  this.shapes = []
+
+  for (var i=0; i < svgs.length; i++) {
+    this.shapes.push(project.importSVG(svgs[i]));
+  };
+}
+
+ShapePresenter.prototype.draw = function(view) {
+  for (var i=0; i < this.shapes.length; i++) {
+    var shape = this.shapes[i];
+    shape.remove()
+    shape.position = view.center;
+    project.activeLayer.addChild(shape);
+  };
+}
 
 var grid = new Grid(view.size, {
   grid_space: 40,
@@ -113,9 +129,10 @@ var grid = new Grid(view.size, {
   padding: 60
 });
 
+var shapeContainer = document.getElementsByClassName('shape-container')[0];
+var shapes = new ShapePresenter(shapeContainer, view.size);
+
 function onResize(event) {
   grid.draw(view.size);
-  shape.remove()
-  shape.position = view.center;
-  project.activeLayer.addChild(shape);
+  shapes.draw(view);
 }
