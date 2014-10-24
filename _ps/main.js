@@ -10,5 +10,4 @@ var shapes = new ShapePresenter(shapeContainer, view.size);
 
 function onResize(event) {
   grid.draw(view.size);
-  shapes.draw(view);
 }

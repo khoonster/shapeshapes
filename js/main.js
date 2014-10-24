@@ -104,20 +104,20 @@ LineBounds.prototype.add = function(point) {
   return this;
 }
 
-function ShapePresenter(container, size) {
-  var svgs = container.children;
-  this.shapes = []
+var ShapePresenter = Group.extend({
+  initialize: function(container, size) {
+    var svgs = container.children;
 
-  for (var i=0; i < svgs.length; i++) {
-    this.shapes.push(project.importSVG(svgs[i]));
-  };
-}
+    Group.prototype.initialize.call(this)
 
-ShapePresenter.prototype.draw = function(view) {
-  for (var i=0; i < this.shapes.length; i++) {
-    var shape = this.shapes[i];
-  };
-}
+    for (var i=0; i < svgs.length; i++) {
+      var shape = project.importSVG(svgs[i]);
+      shape.position = new Point(Math.random() * size.width,
+                                 Math.random() * size.height);
+      this.addChild(shape);
+    };
+  }
+})
 
 var grid = new Grid(view.size, {
   grid_space: 40,
@@ -131,5 +131,4 @@ var shapes = new ShapePresenter(shapeContainer, view.size);
 
 function onResize(event) {
   grid.draw(view.size);
-  shapes.draw(view);
 }
