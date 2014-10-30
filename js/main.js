@@ -3,10 +3,10 @@ function Grid(size, options) {
   this.overhang = options.overhang;
   this.subdivisions = options.subdivisions;
   this.padding = options.padding;
-  this.draw(size);
+  this.write(size);
 }
 
-Grid.prototype.draw = function(size) {
+Grid.prototype.write = function(size) {
   this.width = size.width;
   this.height = size.height;
   this.offset_point = new Point(this.offset(this.width), this.offset(this.height));
@@ -104,6 +104,25 @@ LineBounds.prototype.add = function(point) {
   return this;
 }
 
+var Pool = Group.extend({
+  initialize: function(size, options) {
+    Group.prototype.initialize.call(this)
+    
+    this.padding = new Size(options.padding);
+    this.write(size);
+  },
+  
+  write: function(size) {
+    this.clear()
+    
+    var rect = Shape.Rectangle(new Point(0, 0), size - this.padding * 2);
+    rect.fillColor = 'black';
+    
+    this.addChild(rect);
+    this.position = view.center
+  }
+})
+
 var ShapePresenter = Group.extend({
   initialize: function(container, size) {
     var svgs = container.children;
@@ -119,16 +138,21 @@ var ShapePresenter = Group.extend({
   }
 })
 
+var pool = new Pool(view.size, {
+  padding: new Size(40, 40)
+});
+
 var grid = new Grid(view.size, {
   grid_space: 40,
   overhang: 15,
   subdivisions: 2,
-  padding: 60
+  padding: 100
 });
 
 var shapeContainer = document.getElementsByClassName('shape-container')[0];
 var shapes = new ShapePresenter(shapeContainer, view.size);
 
 function onResize(event) {
-  grid.draw(view.size);
+  grid.write(view.size);
+  pool.write(view.size);
 }

@@ -3,10 +3,10 @@ function Grid(size, options) {
   this.overhang = options.overhang;
   this.subdivisions = options.subdivisions;
   this.padding = options.padding;
-  this.draw(size);
+  this.write(size);
 }
 
-Grid.prototype.draw = function(size) {
+Grid.prototype.write = function(size) {
   this.width = size.width;
   this.height = size.height;
   this.offset_point = new Point(this.offset(this.width), this.offset(this.height));
