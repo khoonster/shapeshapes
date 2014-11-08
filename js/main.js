@@ -146,7 +146,7 @@ Shape.Custom = Group.extend({
 
     this.vector = new Point({
       angle: 360 * Math.random(),
-      length: 0.5 * Math.random()
+      length: 0.1 * Math.random()
     });
   },
   
