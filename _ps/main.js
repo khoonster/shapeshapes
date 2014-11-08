@@ -17,7 +17,3 @@ function onResize(event) {
   grid.write(view.size);
   pool.write(view.size);
 }
-
-function onFrame(event) {
-  shapes.iterate()
-}

@@ -148,6 +148,10 @@ Shape.Custom = Group.extend({
     this.path.position = new Point(Math.random() * size.width,
                                    Math.random() * size.height);
 
+    this.onFrame = function() {
+      this.iterate()
+    }
+
     this.vector = new Point({
       angle: 360 * Math.random(),
       length: 0.5 * Math.random()
@@ -172,7 +176,7 @@ Shape.Custom = Group.extend({
     } else if (this.path.position.y > size.height + this.path.bounds.height) {
       this.path.position.y = -this.path.bounds.height;
     }
-  }
+  },
 })
 
 var pool = new Pool(view.size, {
@@ -193,8 +197,4 @@ var shapes = new SVGPresenter(svgs, view.size);
 function onResize(event) {
   grid.write(view.size);
   pool.write(view.size);
-}
-
-function onFrame(event) {
-  shapes.iterate()
 }
