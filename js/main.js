@@ -22,9 +22,7 @@ Grid.prototype.draw_lines = function(set, func, size) {
   };
 
   for (var i=0; i < this[set].children.length; i++) {
-    if (typeof this[set].children[i] !== "undefined") {
-      this[set].removeChildren(i);
-    };
+    this[set].removeChildren(i);
   };
 
   for (var i=0; i <= count; i++) {
