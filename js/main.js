@@ -123,17 +123,55 @@ var Pool = Group.extend({
   }
 })
 
-var ShapePresenter = Group.extend({
-  initialize: function(container, size) {
-    var svgs = container.children;
-
+var SVGPresenter = Group.extend({
+  initialize: function(svgs, size) {
     Group.prototype.initialize.call(this)
 
     for (var i = svgs.length - 1; i >= 0; i--){
-      var shape = this.importSVG(svgs[i]);
-      shape.position = new Point(Math.random() * size.width,
-                                 Math.random() * size.height);
+      var shape = new Shape.Custom(svgs[i], size)
+      this.addChild(shape)
     };
+  },
+  
+  iterate: function() {
+    for (var i=0; i < this.children.length; i++) {
+      this.children[i].iterate()
+    };
+  }
+})
+
+Shape.Custom = Group.extend({
+  initialize: function(el, size) {
+    Group.prototype.initialize.call(this)
+    
+    this.path = this.importSVG(el);
+    this.path.position = new Point(Math.random() * size.width,
+                                   Math.random() * size.height);
+
+    this.vector = new Point({
+      angle: 360 * Math.random(),
+      length: 0.5 * Math.random()
+    });
+  },
+  
+  iterate: function() {
+    this.checkBorders()
+    this.path.position += this.vector;
+  },
+  
+  checkBorders: function() {
+    var size = view.size;
+    if (this.path.position.x < -this.path.bounds.width) {
+      this.path.position.x = size.width + this.path.bounds.width;
+    } else if (this.path.position.x > size.width + this.path.bounds.width) {
+      this.path.position.x = -this.path.bounds.width;
+    }
+    
+    if (this.path.position.y < -this.path.bounds.height) {
+      this.path.position.y = size.height + this.path.bounds.height;
+    } else if (this.path.position.y > size.height + this.path.bounds.height) {
+      this.path.position.y = -this.path.bounds.height;
+    }
   }
 })
 
@@ -148,10 +186,15 @@ var grid = new Grid(view.size, {
   padding: 100
 });
 
-var shapeContainer = document.getElementsByClassName('shape-container')[0];
-var shapes = new ShapePresenter(shapeContainer, view.size);
+var container = document.getElementsByClassName('shape-container')[0];
+var svgs = container.children;
+var shapes = new SVGPresenter(svgs, view.size);
 
 function onResize(event) {
   grid.write(view.size);
   pool.write(view.size);
+}
+
+function onFrame(event) {
+  shapes.iterate()
 }

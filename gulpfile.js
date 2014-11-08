@@ -3,7 +3,7 @@ var concat = require('gulp-concat');
 var mainBowerFiles = require('main-bower-files');
 
 var sources = {
-  paper: ['_ps/modules/*.js', '_ps/main.js']
+  paper: ['_ps/modules/**/*.js', '_ps/main.js']
 }
 
 var destinations = {

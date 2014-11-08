@@ -9,10 +9,15 @@ var grid = new Grid(view.size, {
   padding: 100
 });
 
-var shapeContainer = document.getElementsByClassName('shape-container')[0];
-var shapes = new ShapePresenter(shapeContainer, view.size);
+var container = document.getElementsByClassName('shape-container')[0];
+var svgs = container.children;
+var shapes = new SVGPresenter(svgs, view.size);
 
 function onResize(event) {
   grid.write(view.size);
   pool.write(view.size);
+}
+
+function onFrame(event) {
+  shapes.iterate()
 }
