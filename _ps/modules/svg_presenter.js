@@ -6,11 +6,5 @@ var SVGPresenter = Group.extend({
       var shape = new Shape.Custom(svgs[i], size)
       this.addChild(shape)
     };
-  },
-  
-  iterate: function() {
-    for (var i=0; i < this.children.length; i++) {
-      this.children[i].iterate()
-    };
   }
 })
