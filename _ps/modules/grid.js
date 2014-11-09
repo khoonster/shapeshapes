@@ -11,30 +11,33 @@ var Grid = Group.extend({
   },
 
   resize: function(size) {
-    this.s = size - this.padding * 2;
-    this.width = this.maximumEdge(this.s.width);
-    this.height = this.maximumEdge(this.s.height);
+    size -= this.padding * 2;
+    this.width = this.maximumEdge(size.width);
+    this.height = this.maximumEdge(size.height);
+
     this.drawLines('horizontal_lines', 'makeHorizontalLine', this.height);
     this.drawLines('vertical_lines', 'makeVerticalLine', this.width);
+
+    this.bounds.center = view.center.round()
   },
 
   drawLines: function(set, func, size) {
     var count = this.linesWithin(size);
 
-    if (typeof this[set] === "undefined") {
-      this[set] = new Group();
+    if (typeof this.children[set] === "undefined") {
+      var group = new Group();
+      group.name = set;
+      this.addChild(group);
     };
 
-    for (var i=0; i < this[set].children.length; i++) {
-      this[set].removeChildren(i);
+    for (var i=0; i < this.children[set].children.length; i++) {
+      this.children[set].removeChildren(i);
     };
 
     for (var i=0; i <= count; i++) {
       var line = this[func](i * this.gridSpace / this.subdivisions);
-      this[set].insertChild(i, line);
+      this.children[set].insertChild(i, line);
     };
-    
-    this[set].bounds.center = new Point(Math.round(view.center.x), Math.round(view.center.y));
   },
 
   makeVerticalLine: function(x) {
