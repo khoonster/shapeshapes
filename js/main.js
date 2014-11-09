@@ -1,15 +1,19 @@
 var Grid = Group.extend({
   initialize: function(size, options) {
+    Group.prototype.initialize.call(this)
+
     this.gridSpace = options.gridSpace;
     this.overhang = options.overhang;
     this.subdivisions = options.subdivisions;
     this.padding = options.padding;
+
     this.resize(size);
   },
-  
+
   resize: function(size) {
-    this.width = size.width;
-    this.height = size.height;
+    this.s = size - this.padding * 2;
+    this.width = this.maximumEdge(this.s.width);
+    this.height = this.maximumEdge(this.s.height);
     this.drawLines('horizontal_lines', 'makeHorizontalLine', this.height);
     this.drawLines('vertical_lines', 'makeVerticalLine', this.width);
   },
@@ -42,15 +46,7 @@ var Grid = Group.extend({
   },
 
   linesWithin: function(l) {
-    return Math.floor(this.size(l) / this.gridSpace * this.subdivisions);
-  },
-
-  size: function(l) {
-    return this.maximumEdge(l) - this.padding;
-  },
-
-  offset: function(l) {
-    return Math.floor(((l - this.padding * 2) % this.gridSpace) / 2);
+    return Math.floor(l / this.gridSpace * this.subdivisions);
   },
 
   getStrokeWidth: function(n) {
@@ -62,25 +58,25 @@ var Grid = Group.extend({
   },
 
   horizontalBounds: function(y) {
-    var top = this.padding + y,
-        left = this.padding - this.overhang,
-        right = this.maximumEdge(this.width) + this.overhang,
+    var top = y,
+        left = -this.overhang,
+        right = this.width + this.overhang,
         from = new Point(left, top),
         to = new Point(right, top);
     return new LineBounds(from, to);
   },
 
   verticalBounds: function(x) {
-    var left = this.padding + x,
-        top = this.padding - this.overhang,
-        bottom = this.maximumEdge(this.height) + this.overhang,
+    var left = x,
+        top = -this.overhang,
+        bottom = this.height + this.overhang,
         from = new Point(left, top),
         to = new Point(left, bottom);
     return new LineBounds(from, to);
   },
 
   maximumEdge: function(length) {
-    return length - this.padding - length % this.gridSpace
+    return length - length % this.gridSpace
   },
 
   makeLine: function(bounds, strokeWidth) {
@@ -92,6 +88,7 @@ var Grid = Group.extend({
     });
   }
 })
+
 function LineBounds(from, to, offset) {
   this.from = new Point(from) + offset;
   this.to = new Point(to) + offset;
@@ -208,14 +205,14 @@ Shape.Custom = Group.extend({
 })
 
 var pool = new Pool(view.size, {
-  padding: new Size(40, 40)
+  padding: new Size(0, 0)
 });
 
 var grid = new Grid(view.size, {
   gridSpace: 40,
   overhang: 15,
   subdivisions: 2,
-  padding: 100
+  padding: new Size(100, 100)
 });
 
 var container = document.getElementsByClassName('shape-container')[0];

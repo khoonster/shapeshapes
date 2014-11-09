@@ -1,12 +1,12 @@
 var pool = new Pool(view.size, {
-  padding: new Size(40, 40)
+  padding: new Size(0, 0)
 });
 
 var grid = new Grid(view.size, {
   gridSpace: 40,
   overhang: 15,
   subdivisions: 2,
-  padding: 100
+  padding: new Size(100, 100)
 });
 
 var container = document.getElementsByClassName('shape-container')[0];
