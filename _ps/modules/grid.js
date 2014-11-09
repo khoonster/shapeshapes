@@ -10,7 +10,6 @@ var Grid = Group.extend({
   write: function(size) {
     this.width = size.width;
     this.height = size.height;
-    this.offset_point = new Point(this.offset(this.width), this.offset(this.height));
     this.draw_lines('horizontal_lines', 'make_horizontal_line', this.height);
     this.draw_lines('vertical_lines', 'make_vertical_line', this.width);
   },
@@ -30,6 +29,8 @@ var Grid = Group.extend({
       var line = this[func](i * this.grid_space / this.subdivisions);
       this[set].insertChild(i, line);
     };
+    
+    this[set].bounds.center = new Point(Math.round(view.center.x), Math.round(view.center.y));
   },
 
   make_vertical_line: function(x) {
@@ -66,7 +67,7 @@ var Grid = Group.extend({
         right = this.maximum_edge(this.width) + this.overhang,
         from = new Point(left, top),
         to = new Point(right, top);
-    return new LineBounds(from, to).add(this.offset_point);
+    return new LineBounds(from, to);
   },
 
   vertical_bounds: function(x) {
@@ -75,7 +76,7 @@ var Grid = Group.extend({
         bottom = this.maximum_edge(this.height) + this.overhang,
         from = new Point(left, top),
         to = new Point(left, bottom);
-    return new LineBounds(from, to).add(this.offset_point);
+    return new LineBounds(from, to);
   },
 
   maximum_edge: function(length) {
