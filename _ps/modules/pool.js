@@ -3,10 +3,10 @@ var Pool = Group.extend({
     Group.prototype.initialize.call(this)
     
     this.padding = new Size(options.padding);
-    this.write(size);
+    this.resize(size);
   },
   
-  write: function(size) {
+  resize: function(size) {
     this.clear()
     
     var rect = Shape.Rectangle(new Point(0, 0), size - this.padding * 2);

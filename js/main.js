@@ -4,10 +4,10 @@ var Grid = Group.extend({
     this.overhang = options.overhang;
     this.subdivisions = options.subdivisions;
     this.padding = options.padding;
-    this.write(size);
+    this.resize(size);
   },
   
-  write: function(size) {
+  resize: function(size) {
     this.width = size.width;
     this.height = size.height;
     this.drawLines('horizontal_lines', 'makeHorizontalLine', this.height);
@@ -109,10 +109,10 @@ var Pool = Group.extend({
     Group.prototype.initialize.call(this)
     
     this.padding = new Size(options.padding);
-    this.write(size);
+    this.resize(size);
   },
   
-  write: function(size) {
+  resize: function(size) {
     this.clear()
     
     var rect = Shape.Rectangle(new Point(0, 0), size - this.padding * 2);
@@ -223,6 +223,6 @@ var svgs = container.children;
 var shapes = new SVGPresenter(svgs, view.size);
 
 function onResize(event) {
-  grid.write(view.size);
-  pool.write(view.size);
+  grid.resize(view.size);
+  pool.resize(view.size);
 }

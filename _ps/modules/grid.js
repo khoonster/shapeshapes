@@ -4,10 +4,10 @@ var Grid = Group.extend({
     this.overhang = options.overhang;
     this.subdivisions = options.subdivisions;
     this.padding = options.padding;
-    this.write(size);
+    this.resize(size);
   },
   
-  write: function(size) {
+  resize: function(size) {
     this.width = size.width;
     this.height = size.height;
     this.drawLines('horizontal_lines', 'makeHorizontalLine', this.height);

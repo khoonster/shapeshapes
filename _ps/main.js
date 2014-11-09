@@ -14,6 +14,6 @@ var svgs = container.children;
 var shapes = new SVGPresenter(svgs, view.size);
 
 function onResize(event) {
-  grid.write(view.size);
-  pool.write(view.size);
+  grid.resize(view.size);
+  pool.resize(view.size);
 }
