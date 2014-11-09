@@ -1,6 +1,6 @@
 var Grid = Group.extend({
   initialize: function(size, options) {
-    this.grid_space = options.grid_space;
+    this.gridSpace = options.gridSpace;
     this.overhang = options.overhang;
     this.subdivisions = options.subdivisions;
     this.padding = options.padding;
@@ -10,12 +10,12 @@ var Grid = Group.extend({
   write: function(size) {
     this.width = size.width;
     this.height = size.height;
-    this.draw_lines('horizontal_lines', 'make_horizontal_line', this.height);
-    this.draw_lines('vertical_lines', 'make_vertical_line', this.width);
+    this.drawLines('horizontal_lines', 'makeHorizontalLine', this.height);
+    this.drawLines('vertical_lines', 'makeVerticalLine', this.width);
   },
 
-  draw_lines: function(set, func, size) {
-    var count = this.lines_within(size);
+  drawLines: function(set, func, size) {
+    var count = this.linesWithin(size);
 
     if (typeof this[set] === "undefined") {
       this[set] = new Group();
@@ -26,64 +26,64 @@ var Grid = Group.extend({
     };
 
     for (var i=0; i <= count; i++) {
-      var line = this[func](i * this.grid_space / this.subdivisions);
+      var line = this[func](i * this.gridSpace / this.subdivisions);
       this[set].insertChild(i, line);
     };
     
     this[set].bounds.center = new Point(Math.round(view.center.x), Math.round(view.center.y));
   },
 
-  make_vertical_line: function(x) {
-    return this.make_line(this.vertical_bounds(x), this.stroke_width(x));
+  makeVerticalLine: function(x) {
+    return this.makeLine(this.verticalBounds(x), this.getStrokeWidth(x));
   },
 
-  make_horizontal_line: function(y) {
-    return this.make_line(this.horizontal_bounds(y), this.stroke_width(y));
+  makeHorizontalLine: function(y) {
+    return this.makeLine(this.horizontalBounds(y), this.getStrokeWidth(y));
   },
 
-  lines_within: function(l) {
-    return Math.floor(this.size(l) / this.grid_space * this.subdivisions);
+  linesWithin: function(l) {
+    return Math.floor(this.size(l) / this.gridSpace * this.subdivisions);
   },
 
   size: function(l) {
-    return this.maximum_edge(l) - this.padding;
+    return this.maximumEdge(l) - this.padding;
   },
 
   offset: function(l) {
-    return Math.floor(((l - this.padding * 2) % this.grid_space) / 2);
+    return Math.floor(((l - this.padding * 2) % this.gridSpace) / 2);
   },
 
-  stroke_width: function(n) {
-    if (n % this.grid_space) {
+  getStrokeWidth: function(n) {
+    if (n % this.gridSpace) {
       return 1
     } else {
       return 2
     }
   },
 
-  horizontal_bounds: function(y) {
+  horizontalBounds: function(y) {
     var top = this.padding + y,
         left = this.padding - this.overhang,
-        right = this.maximum_edge(this.width) + this.overhang,
+        right = this.maximumEdge(this.width) + this.overhang,
         from = new Point(left, top),
         to = new Point(right, top);
     return new LineBounds(from, to);
   },
 
-  vertical_bounds: function(x) {
+  verticalBounds: function(x) {
     var left = this.padding + x,
         top = this.padding - this.overhang,
-        bottom = this.maximum_edge(this.height) + this.overhang,
+        bottom = this.maximumEdge(this.height) + this.overhang,
         from = new Point(left, top),
         to = new Point(left, bottom);
     return new LineBounds(from, to);
   },
 
-  maximum_edge: function(length) {
-    return length - this.padding - length % this.grid_space
+  maximumEdge: function(length) {
+    return length - this.padding - length % this.gridSpace
   },
 
-  make_line: function(bounds, strokeWidth) {
+  makeLine: function(bounds, strokeWidth) {
     return new Path.Line({
       from: bounds.from,
       to: bounds.to,
@@ -212,7 +212,7 @@ var pool = new Pool(view.size, {
 });
 
 var grid = new Grid(view.size, {
-  grid_space: 40,
+  gridSpace: 40,
   overhang: 15,
   subdivisions: 2,
   padding: 100

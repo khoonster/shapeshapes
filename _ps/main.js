@@ -3,7 +3,7 @@ var pool = new Pool(view.size, {
 });
 
 var grid = new Grid(view.size, {
-  grid_space: 40,
+  gridSpace: 40,
   overhang: 15,
   subdivisions: 2,
   padding: 100
