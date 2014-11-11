@@ -27,7 +27,7 @@ var GridSequence = Group.extend({
   makeLine: function(i) {
     var klass = this.line;
     var position = i * this.gridSpace / klass.subdivisions
-    var line = new klass(position, new Size(this.width, this.height));
+    var line = new klass(position, new Size(this.width, this.height), i);
     line.strokeColor = 'white';
     line.strokeWidth = klass.getStrokeWidth(i);
     return line;

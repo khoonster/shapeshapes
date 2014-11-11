@@ -48,11 +48,13 @@ var GridLine = Path.extend({
     subdivisions: 2
   },
 
-  initialize: function(position, container) {
-    var left = this.get('left', arguments);
-    var top = this.get('top', arguments);
-    var angle = this.get('angle', arguments);
-    var length = this.get('length', arguments);
+  initialize: function() {
+    this.args = arguments;
+
+    var left = this.get('left');
+    var top = this.get('top');
+    var angle = this.get('angle');
+    var length = this.get('length');
 
     var start = new Point(left, top);
     var vector = new Point({angle: angle, length: length});
@@ -63,55 +65,86 @@ var GridLine = Path.extend({
     });
   },
   
-  get: function(attr, args) {
+  get: function(attr) {
     var name = attr.charAt(0).toUpperCase() + attr.slice(1);
     var val = this['get' + name];
     if (typeof val == "function") {
-      return val.apply(this, args);
+      return val.apply(this, this.args);
     } else {
       return val
     }
   }
 })
 
-var VerticalLine = GridLine.extend({
-  getTop: -15,
+var Score = GridLine.extend({
+  statics: {
+    offsetPattern: [20, 15]
+  },
+  
+  getOffset: function(_, _, i) {
+    var lengths = this.constructor.offsetPattern
+    var index = i % this.constructor.subdivisions % lengths.length
+    return lengths[index]
+  }
+})
+
+var VerticalLine = Score.extend({
   getAngle: 90,
   
+  getTop: function() {
+    return - this.get('offset')
+  },
+
   getLeft: function(position, container) {
     return position
   },
   
   getLength: function(position, container) {
-    return container.height + 30
+    return container.height + this.get('offset') * 2
   }
 })
 
-var HorizontalLine = GridLine.extend({
-  getLeft: -15,
+var HorizontalLine = Score.extend({
   getAngle: 0,
+
+  getLeft: function() {
+    return - this.get('offset')
+  },
   
   getTop: function(position, container) {
     return position
   },
   
   getLength: function(position, container) {
-    return container.width + 30
+    return container.width + this.get('offset') * 2
   }
 })
 
 var Tick = GridLine.extend({
   statics: {
     strokePattern: [0, 1, 1, 1],
-    subdivisions: 8
+    subdivisions: 8,
+    lengthPattern: [0, 10, 20, 10]
+  },
+  
+  getLength: function(_, _, i) {
+    var lengths = this.constructor.lengthPattern
+    var index = i % this.constructor.subdivisions % lengths.length
+    return lengths[index]
+  },
+  
+  getOffset: function(_, _, i) {
+    return this.get('length') / 2
   }
 })
 
 var TopTick = Tick.extend({
   getAngle: 90,
-  getTop: -10,
-  getLength: 20,
-  
+
+  getTop: function() {
+    return -this.get('offset')
+  },
+
   getLeft: function(position) {
     return position
   }
@@ -119,14 +152,16 @@ var TopTick = Tick.extend({
 
 var BottomTick = TopTick.extend({
   getTop: function(position, container) {
-    return container.height - 10
+    return container.height - this.get('offset')
   }
 })
 
 var LeftTick = Tick.extend({
   getAngle: 0,
-  getLeft: -10,
-  getLength: 20,
+
+  getLeft: function() {
+    return -this.get('offset')
+  },
   
   getTop: function(position) {
     return position
@@ -135,7 +170,7 @@ var LeftTick = Tick.extend({
 
 var RightTick = LeftTick.extend({
   getLeft: function(position, container) {
-    return container.width - 10
+    return container.width - this.get('offset')
   }
 })
 
@@ -168,7 +203,7 @@ var GridSequence = Group.extend({
   makeLine: function(i) {
     var klass = this.line;
     var position = i * this.gridSpace / klass.subdivisions
-    var line = new klass(position, new Size(this.width, this.height));
+    var line = new klass(position, new Size(this.width, this.height), i);
     line.strokeColor = 'white';
     line.strokeWidth = klass.getStrokeWidth(i);
     return line;
