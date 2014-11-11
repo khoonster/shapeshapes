@@ -4,8 +4,6 @@ var pool = new Pool(view.size, {
 
 var grid = new Grid(view.size, {
   gridSpace: 40,
-  overhang: 15,
-  subdivisions: 2,
   padding: new Size(100, 100)
 });
 

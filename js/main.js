@@ -1,13 +1,24 @@
 var Grid = Group.extend({
   initialize: function(size, options) {
-    Group.prototype.initialize.call(this)
+    Group.prototype.initialize.call(this);
 
     this.gridSpace = options.gridSpace;
-    this.overhang = options.overhang;
-    this.subdivisions = options.subdivisions;
     this.padding = options.padding;
+    delete options.padding;
+
+    this.addSequence(VerticalLine, 'width', options);
+    this.addSequence(TopTick, 'width', options);
+    this.addSequence(BottomTick, 'width', options);
+
+    this.addSequence(HorizontalLine, 'height', options);
+    this.addSequence(LeftTick, 'height', options);
+    this.addSequence(RightTick, 'height', options);
 
     this.resize(size);
+  },
+
+  addSequence: function(klass, axis, options) {
+    this.addChild(new GridSequence(klass, axis, options))
   },
 
   resize: function(size) {
@@ -15,80 +26,159 @@ var Grid = Group.extend({
     this.width = this.maximumEdge(size.width);
     this.height = this.maximumEdge(size.height);
 
-    this.drawLines('horizontal_lines', 'makeHorizontalLine', this.height);
-    this.drawLines('vertical_lines', 'makeVerticalLine', this.width);
+    for (var i=0; i < this.children.length; i++) {
+      this.children[i].resize(new Size(this.width, this.height))
+    };
 
     this.bounds.center = view.center.round()
   },
 
-  drawLines: function(set, func, size) {
-    var count = this.linesWithin(size);
+  maximumEdge: function(length) {
+    return length - length % this.gridSpace
+  }
+})
 
-    if (typeof this.children[set] === "undefined") {
-      var group = new Group();
-      group.name = set;
-      this.addChild(group);
-    };
+var GridLine = Path.extend({
+  statics: {
+    getStrokeWidth: function(i) {
+      return this.strokePattern[i % this.subdivisions % this.strokePattern.length]
+    },
 
-    for (var i=0; i < this.children[set].children.length; i++) {
-      this.children[set].removeChildren(i);
-    };
+    strokePattern: [2, 1],
+    subdivisions: 2
+  },
+
+  initialize: function(position, container) {
+    var top = this.getTop.apply(this, arguments);
+    var left = this.getLeft.apply(this, arguments);
+    var angle = this.getAngle.apply(this, arguments);
+    var length = this.getLength.apply(this, arguments);
+
+    var start = new Point(left, top);
+    var vector = new Point({angle: angle, length: length});
+    var end = start + vector;
+
+    Path.prototype.initialize.call(this, {
+      segments: [start, end]
+    });
+  }
+})
+
+var VerticalLine = GridLine.extend({
+  getTop: function(position, container) {
+    return -15
+  },
+  
+  getLeft: function(position, container) {
+    return position
+  },
+  
+  getLength: function(position, container) {
+    return container.height + 30
+  },
+  
+  getAngle: function(position, container) {
+    return 90
+  }
+})
+
+var HorizontalLine = GridLine.extend({
+  getTop: function(position, container) {
+    return position
+  },
+  
+  getLeft: function(position, container) {
+    return -15
+  },
+  
+  getLength: function(position, container) {
+    return container.width + 30
+  },
+  
+  getAngle: function(position, container) {
+    return 0
+  }
+})
+
+var TopTick = VerticalLine.extend({
+  statics: {
+    strokePattern: [0, 1, 1, 1],
+    subdivisions: 8
+  },
+  
+  getTop: function(position, container) {
+    return -10
+  },
+  
+  getLength: function(position, container) {
+    return 20
+  }
+})
+
+var BottomTick = TopTick.extend({
+  getTop: function(position, container) {
+    return container.height - 10
+  }
+})
+
+var LeftTick = HorizontalLine.extend({
+  statics: {
+    strokePattern: [0, 1, 1, 1],
+    subdivisions: 8
+  },
+  
+  getLeft: function() {
+    return -10
+  },
+  
+  getLength: function(position, container) {
+    return 20
+  }
+})
+
+var RightTick = LeftTick.extend({
+  getLeft: function(position, container) {
+    return container.width - 10
+  }
+})
+
+var GridSequence = Group.extend({
+  initialize: function(line, direction, options) {
+    Group.prototype.initialize.call(this);
+
+    this.line = line;
+    this.direction = direction;
+    this.gridSpace = options.gridSpace;
+  },
+  
+  resize: function(size) {
+    this.height = size.height;
+    this.width = size.width;
+    this.drawLines(size)
+  },
+  
+  drawLines: function(size) {
+    var count = this.linesWithin(size[this.direction]);
+
+    this.clear()
 
     for (var i=0; i <= count; i++) {
-      var line = this[func](i * this.gridSpace / this.subdivisions);
-      this.children[set].insertChild(i, line);
+      var line = this.makeLine(i);
+      this.insertChild(i, line);
     };
   },
 
-  makeVerticalLine: function(x) {
-    return this.makeLine(this.verticalBounds(x), this.getStrokeWidth(x));
-  },
-
-  makeHorizontalLine: function(y) {
-    return this.makeLine(this.horizontalBounds(y), this.getStrokeWidth(y));
+  makeLine: function(i) {
+    var klass = this.line;
+    var position = i * this.gridSpace / klass.subdivisions
+    var line = new klass(position, new Size(this.width, this.height));
+    line.strokeColor = 'white';
+    line.strokeWidth = klass.getStrokeWidth(i);
+    return line;
   },
 
   linesWithin: function(l) {
-    return Math.floor(l / this.gridSpace * this.subdivisions);
-  },
-
-  getStrokeWidth: function(n) {
-    if (n % this.gridSpace) {
-      return 1
-    } else {
-      return 2
-    }
-  },
-
-  horizontalBounds: function(y) {
-    var top = y,
-        left = -this.overhang,
-        right = this.width + this.overhang,
-        from = new Point(left, top),
-        to = new Point(right, top);
-    return new LineBounds(from, to);
-  },
-
-  verticalBounds: function(x) {
-    var left = x,
-        top = -this.overhang,
-        bottom = this.height + this.overhang,
-        from = new Point(left, top),
-        to = new Point(left, bottom);
-    return new LineBounds(from, to);
-  },
-
-  maximumEdge: function(length) {
-    return length - length % this.gridSpace
-  },
-
-  makeLine: function(bounds, strokeWidth) {
-    return new Path.Line({
-      from: bounds.from,
-      to: bounds.to,
-      strokeColor: 'white',
-      strokeWidth: strokeWidth || 2
-    });
+    return Math.floor(l / this.gridSpace * this.line.subdivisions);
   }
 })
 
@@ -213,8 +303,6 @@ var pool = new Pool(view.size, {
 
 var grid = new Grid(view.size, {
   gridSpace: 40,
-  overhang: 15,
-  subdivisions: 2,
   padding: new Size(100, 100)
 });
 
