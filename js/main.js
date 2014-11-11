@@ -49,10 +49,10 @@ var GridLine = Path.extend({
   },
 
   initialize: function(position, container) {
-    var top = this.getTop.apply(this, arguments);
-    var left = this.getLeft.apply(this, arguments);
-    var angle = this.getAngle.apply(this, arguments);
-    var length = this.getLength.apply(this, arguments);
+    var left = this.get('left', arguments);
+    var top = this.get('top', arguments);
+    var angle = this.get('angle', arguments);
+    var length = this.get('length', arguments);
 
     var start = new Point(left, top);
     var vector = new Point({angle: angle, length: length});
@@ -61,13 +61,22 @@ var GridLine = Path.extend({
     Path.prototype.initialize.call(this, {
       segments: [start, end]
     });
+  },
+  
+  get: function(attr, args) {
+    var name = attr.charAt(0).toUpperCase() + attr.slice(1);
+    var val = this['get' + name];
+    if (typeof val == "function") {
+      return val.apply(this, args);
+    } else {
+      return val
+    }
   }
 })
 
 var VerticalLine = GridLine.extend({
-  getTop: function(position, container) {
-    return -15
-  },
+  getTop: -15,
+  getAngle: 90,
   
   getLeft: function(position, container) {
     return position
@@ -75,43 +84,36 @@ var VerticalLine = GridLine.extend({
   
   getLength: function(position, container) {
     return container.height + 30
-  },
-  
-  getAngle: function(position, container) {
-    return 90
   }
 })
 
 var HorizontalLine = GridLine.extend({
+  getLeft: -15,
+  getAngle: 0,
+  
   getTop: function(position, container) {
     return position
   },
   
-  getLeft: function(position, container) {
-    return -15
-  },
-  
   getLength: function(position, container) {
     return container.width + 30
-  },
-  
-  getAngle: function(position, container) {
-    return 0
   }
 })
 
-var TopTick = VerticalLine.extend({
+var Tick = GridLine.extend({
   statics: {
     strokePattern: [0, 1, 1, 1],
     subdivisions: 8
-  },
+  }
+})
+
+var TopTick = Tick.extend({
+  getAngle: 90,
+  getTop: -10,
+  getLength: 20,
   
-  getTop: function(position, container) {
-    return -10
-  },
-  
-  getLength: function(position, container) {
-    return 20
+  getLeft: function(position) {
+    return position
   }
 })
 
@@ -121,18 +123,13 @@ var BottomTick = TopTick.extend({
   }
 })
 
-var LeftTick = HorizontalLine.extend({
-  statics: {
-    strokePattern: [0, 1, 1, 1],
-    subdivisions: 8
-  },
+var LeftTick = Tick.extend({
+  getAngle: 0,
+  getLeft: -10,
+  getLength: 20,
   
-  getLeft: function() {
-    return -10
-  },
-  
-  getLength: function(position, container) {
-    return 20
+  getTop: function(position) {
+    return position
   }
 })
 
