@@ -38,7 +38,7 @@ var GridLine = Path.extend({
 
 var Score = GridLine.extend({
   statics: {
-    offsetPattern: [20, 15]
+    offsetPattern: [12, 9]
   },
   
   getOffset: function(_, _, i) {
@@ -48,7 +48,7 @@ var Score = GridLine.extend({
   }
 })
 
-var VerticalLine = Score.extend({
+var VerticalScore = Score.extend({
   getAngle: 90,
   
   getTop: function() {
@@ -64,7 +64,7 @@ var VerticalLine = Score.extend({
   }
 })
 
-var HorizontalLine = Score.extend({
+var HorizontalScore = Score.extend({
   getAngle: 0,
 
   getLeft: function() {
@@ -84,7 +84,7 @@ var Tick = GridLine.extend({
   statics: {
     strokePattern: [0, 1, 1, 1],
     subdivisions: 8,
-    lengthPattern: [0, 10, 20, 10]
+    lengthPattern: [0, 9, 18, 9]
   },
   
   getLength: function(_, _, i) {

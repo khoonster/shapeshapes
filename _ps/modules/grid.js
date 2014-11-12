@@ -6,11 +6,11 @@ var Grid = Group.extend({
     this.padding = options.padding;
     delete options.padding;
 
-    this.addSequence(VerticalLine, 'width', options);
+    this.addSequence(VerticalScore, 'width', options);
     this.addSequence(TopTick, 'width', options);
     this.addSequence(BottomTick, 'width', options);
 
-    this.addSequence(HorizontalLine, 'height', options);
+    this.addSequence(HorizontalScore, 'height', options);
     this.addSequence(LeftTick, 'height', options);
     this.addSequence(RightTick, 'height', options);
 
