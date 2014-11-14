@@ -6,6 +6,10 @@ var Grid = Group.extend({
     this.padding = options.padding;
     delete options.padding;
 
+    this.sequences = new Group()
+    this.sequences.name = "sequences"
+    this.addChild(this.sequences)
+
     this.addSequence(VerticalScore, 'width', options);
     this.addSequence(TopTick, 'width', options);
     this.addSequence(BottomTick, 'width', options);
@@ -14,27 +18,36 @@ var Grid = Group.extend({
     this.addSequence(LeftTick, 'height', options);
     this.addSequence(RightTick, 'height', options);
 
+    this.logo = new Logo(new Point(this.gridSpace), this.gridSpace * 3)
+    this.addChild(this.logo)
+
     this.resize(size);
   },
 
   addSequence: function(klass, axis, options) {
-    this.addChild(new GridSequence(klass, axis, options))
+    this.sequences.addChild(new GridSequence(klass, axis, options))
   },
 
   resize: function(size) {
     size -= this.padding * 2;
     this.width = this.maximumEdge(size.width);
     this.height = this.maximumEdge(size.height);
+    size = new Size(this.width, this.height);
 
-    for (var i=0; i < this.children.length; i++) {
-      this.children[i].resize(new Size(this.width, this.height))
-    };
+    this.logo.resize(size);
+    this.resizeSequences(size);
 
     this.bounds.center = view.center.round()
   },
 
   maximumEdge: function(length) {
-    return length - length % this.gridSpace
+    return length - length % this.gridSpace;
+  },
+
+  resizeSequences: function(size) {
+    for (var i=0; i < this.sequences.children.length; i++) {
+      this.sequences.children[i].resize(size);
+    }
   }
 })
 
@@ -225,6 +238,45 @@ LineBounds.prototype.add = function(point) {
   this.to = this.to + offset;
   return this;
 }
+
+var Logo = Group.extend({
+  initialize: function(point, size) {
+    point = new Point(point);
+    size = new Size(size);
+
+    this.point = point;
+    this.size = new Size(size.width, size.height - size.width / 3);
+
+    var elements = document.getElementsByClassName('logo');
+    var logo = elements[0];
+    var svg = logo.children[0];
+
+    var background = new Shape.Rectangle(new Point(0, 0), this.size);
+    background.fillColor = 'black';
+    background.strokeWidth = 2;
+    background.strokeColor = 'white';
+
+    var text = project.importSVG(svg);
+    text.fillColor = 'white';
+    text.bounds.center = this.size / 2;
+    text.scale(1.8);
+
+    Group.prototype.initialize.call(this, {
+      children: [background, text],
+      position: this.point
+    });
+  },
+  
+  resize: function(size) {
+    this.bounds.point = this.point;
+    this.visible = this.fitsWithin(size);
+  },
+  
+  fitsWithin: function(size) {
+    return (this.bounds.width + this.point.x < size.width &&
+      this.bounds.height + this.point.y < size.height)
+  }
+})
 
 var Pool = Group.extend({
   initialize: function(size, options) {
