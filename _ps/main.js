@@ -11,7 +11,7 @@ var grid = new Grid(view.size, {
   padding: new Size(100, 100)
 });
 
-var shapes = new SVGPresenter('shape-container', view.size);
+var shapes = SVGPresenter.fromClassName('shape-container', view.size);
 
 view.onResize = function(event) {
   grid.resize(view.size);
