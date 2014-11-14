@@ -6,6 +6,13 @@
 body {
   background-color: white;
   margin: 0;
+
+  // Prevent scrolling anywhere on the page to prevent Safari and iOS
+  // showing "above" and "below" the page
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  position: fixed;
 }
 
 #workspace {
