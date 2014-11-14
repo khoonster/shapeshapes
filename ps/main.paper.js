@@ -12,49 +12,38 @@ var grid = new Grid(view.size, {
   padding: new Size(100, 100)
 });
 
-var container = document.getElementsByClassName('shape-container')[0];
-var svgs = container.children;
-var shapes = new SVGPresenter(svgs, view.size);
+var shapes = new SVGPresenter('shape-container', view.size);
 
 function onResize(event) {
   grid.resize(view.size);
   pool.resize(view.size);
 }
 
-},{"./modules/grid.js":2,"./modules/pool.js":6,"./modules/svg_presenter.js":10}],2:[function(require,module,exports){
+},{"./modules/grid.js":2,"./modules/pool.js":7,"./modules/svg_presenter.js":11}],2:[function(require,module,exports){
 var Score = require('./score.js');
 var Tick = require('./tick.js');
-var GridSequence = require('./grid_sequence.js');
 var Logo = require('./logo.js');
 
-module.exports = Group.extend({
+var Grid = Group.extend({
+  statics: {
+    Sequencer: require('./grid/sequencer.js')
+  },
+  
   initialize: function(size, options) {
-    Group.prototype.initialize.call(this);
-
     this.gridSpace = options.gridSpace;
     this.padding = options.padding;
     delete options.padding;
 
-    this.sequences = new Group();
-    this.sequences.name = "sequences";
-    this.addChild(this.sequences);
-
-    this.addSequence(Score.Vertical, 'width', options);
-    this.addSequence(Tick.Top, 'width', options);
-    this.addSequence(Tick.Bottom, 'width', options);
-
-    this.addSequence(Score.Horizontal, 'height', options);
-    this.addSequence(Tick.Left, 'height', options);
-    this.addSequence(Tick.Right, 'height', options);
+    this.sequencer = new Grid.Sequencer({
+      'width': [Score.Vertical, Tick.Top, Tick.Bottom],
+      'height': [Score.Horizontal, Tick.Left, Tick.Right]
+    }, options);
 
     this.logo = new Logo(new Point(this.gridSpace), this.gridSpace * 3);
-    this.addChild(this.logo);
+
+    Group.prototype.initialize.call(this, [this.sequencer, this.logo]);
 
     this.resize(size);
-  },
-
-  addSequence: function(klass, axis, options) {
-    this.sequences.addChild(new GridSequence(klass, axis, options))
   },
 
   resize: function(size) {
@@ -64,23 +53,49 @@ module.exports = Group.extend({
     size = new Size(this.width, this.height);
 
     this.logo.resize(size);
-    this.resizeSequences(size);
+    this.sequencer.resize(size);
 
     this.bounds.center = view.center.round();
   },
 
   maximumEdge: function(length) {
     return length - length % this.gridSpace;
+  }
+})
+
+module.exports = Grid
+
+},{"./grid/sequencer.js":3,"./logo.js":6,"./score.js":8,"./tick.js":12}],3:[function(require,module,exports){
+var Sequence = require('../grid_sequence.js')
+
+module.exports = Group.extend({
+  initialize: function(sequences, options) {
+    var axes = ['width', 'height'];
+
+    this.options = options;
+
+    Group.prototype.initialize.call(this);
+
+    for (var i=0; i < axes.length; i++) {
+      var axis = axes[i];
+      for (var a=0; a < sequences[axis].length; a++) {
+        this.add(sequences[axis][a], axis, this.options)
+      };
+    };
   },
 
-  resizeSequences: function(size) {
-    for (var i=0; i < this.sequences.children.length; i++) {
-      this.sequences.children[i].resize(size);
+  add: function(klass, axis, options) {
+    this.addChild(new Sequence(klass, axis, options))
+  },
+
+  resize: function(size) {
+    for (var i=0; i < this.children.length; i++) {
+      this.children[i].resize(size);
     }
   }
 })
 
-},{"./grid_sequence.js":4,"./logo.js":5,"./score.js":7,"./tick.js":11}],3:[function(require,module,exports){
+},{"../grid_sequence.js":5}],4:[function(require,module,exports){
 module.exports = Path.extend({
   statics: {
     getStrokeWidth: function(i) {
@@ -119,7 +134,7 @@ module.exports = Path.extend({
   }
 })
 
-},{}],4:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 module.exports = Group.extend({
   initialize: function(line, direction, options) {
     Group.prototype.initialize.call(this);
@@ -160,7 +175,7 @@ module.exports = Group.extend({
   }
 });
 
-},{}],5:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 module.exports = Group.extend({
   initialize: function(point, size) {
     point = new Point(point);
@@ -200,7 +215,7 @@ module.exports = Group.extend({
   }
 });
 
-},{}],6:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 module.exports = Group.extend({
   initialize: function(size, options) {
     Group.prototype.initialize.call(this);
@@ -220,7 +235,7 @@ module.exports = Group.extend({
   }
 })
 
-},{}],7:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 var GridLine = require('./grid_line.js');
 
 var BaseScore = GridLine.extend({
@@ -272,12 +287,12 @@ module.exports = {
   Horizontal: HorizontalScore
 }
 
-},{"./grid_line.js":3}],8:[function(require,module,exports){
+},{"./grid_line.js":4}],9:[function(require,module,exports){
 module.exports = {
   Custom: require('./shape/custom.js')
 }
 
-},{"./shape/custom.js":9}],9:[function(require,module,exports){
+},{"./shape/custom.js":10}],10:[function(require,module,exports){
 module.exports = Group.extend({
   initialize: function(el, size) {
     Group.prototype.initialize.call(this);
@@ -351,12 +366,15 @@ module.exports = Group.extend({
   }
 })
 
-},{}],10:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 var Shape = require('./shape.js')
 
 module.exports = Group.extend({
-  initialize: function(svgs, size) {
+  initialize: function(selector, size) {
     Group.prototype.initialize.call(this);
+
+    var container = document.getElementsByClassName(selector)[0];
+    var svgs = container.children;
 
     for (var i = svgs.length - 1; i >= 0; i--){
       var shape = new Shape.Custom(svgs[i], size);
@@ -365,7 +383,7 @@ module.exports = Group.extend({
   }
 })
 
-},{"./shape.js":8}],11:[function(require,module,exports){
+},{"./shape.js":9}],12:[function(require,module,exports){
 var GridLine = require('./grid_line.js');
 
 var Tick = GridLine.extend({
@@ -429,4 +447,4 @@ module.exports = {
   Right: RightTick
 }
 
-},{"./grid_line.js":3}]},{},[1])
+},{"./grid_line.js":4}]},{},[1])

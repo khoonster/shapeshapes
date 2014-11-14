@@ -11,9 +11,7 @@ var grid = new Grid(view.size, {
   padding: new Size(100, 100)
 });
 
-var container = document.getElementsByClassName('shape-container')[0];
-var svgs = container.children;
-var shapes = new SVGPresenter(svgs, view.size);
+var shapes = new SVGPresenter('shape-container', view.size);
 
 function onResize(event) {
   grid.resize(view.size);
