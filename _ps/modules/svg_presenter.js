@@ -9,6 +9,7 @@ module.exports = Group.extend({
 
     for (var i = svgs.length - 1; i >= 0; i--){
       var shape = new Shape.Custom(svgs[i], size);
+      shape.path.position = new Point.random() * size;
       this.addChild(shape);
     };
   }

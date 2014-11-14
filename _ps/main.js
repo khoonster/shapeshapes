@@ -13,7 +13,7 @@ var grid = new Grid(view.size, {
 
 var shapes = new SVGPresenter('shape-container', view.size);
 
-function onResize(event) {
+view.onResize = function(event) {
   grid.resize(view.size);
   pool.resize(view.size);
 }

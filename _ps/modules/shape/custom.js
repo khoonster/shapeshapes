@@ -3,8 +3,6 @@ module.exports = Group.extend({
     Group.prototype.initialize.call(this);
 
     this.path = this.importSVG(el);
-    this.path.position = new Point(Math.random() * size.width,
-                                   Math.random() * size.height);
     this.width = this.path.bounds.width;
     this.height = this.path.bounds.height;
     this.held = false;

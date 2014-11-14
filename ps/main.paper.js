@@ -14,7 +14,7 @@ var grid = new Grid(view.size, {
 
 var shapes = new SVGPresenter('shape-container', view.size);
 
-function onResize(event) {
+view.onResize = function(event) {
   grid.resize(view.size);
   pool.resize(view.size);
 }
@@ -298,8 +298,6 @@ module.exports = Group.extend({
     Group.prototype.initialize.call(this);
 
     this.path = this.importSVG(el);
-    this.path.position = new Point(Math.random() * size.width,
-                                   Math.random() * size.height);
     this.width = this.path.bounds.width;
     this.height = this.path.bounds.height;
     this.held = false;
@@ -378,6 +376,7 @@ module.exports = Group.extend({
 
     for (var i = svgs.length - 1; i >= 0; i--){
       var shape = new Shape.Custom(svgs[i], size);
+      shape.path.position = new Point.random() * size;
       this.addChild(shape);
     };
   }
