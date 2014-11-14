@@ -7,7 +7,8 @@ var sources = {
 }
 
 var destinations = {
-  vendor: 'js/vendor'
+  vendor: 'js/vendor',
+  paper: 'ps'
 }
 
 gulp.task('vendor', function() {
@@ -17,8 +18,8 @@ gulp.task('vendor', function() {
 
 gulp.task('paper', function() {
   gulp.src(sources.paper)
-    .pipe(concat('main.js'))
-    .pipe(gulp.dest('js'));
+    .pipe(concat('main.paper.js'))
+    .pipe(gulp.dest(destinations.paper));
 })
 
 gulp.task('watch', function() {
