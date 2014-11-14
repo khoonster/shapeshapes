@@ -1,4 +1,4 @@
-var Logo = Group.extend({
+module.exports = Group.extend({
   initialize: function(point, size) {
     point = new Point(point);
     size = new Size(size);
@@ -33,6 +33,6 @@ var Logo = Group.extend({
   
   fitsWithin: function(size) {
     return (this.bounds.width + this.point.x < size.width &&
-      this.bounds.height + this.point.y < size.height)
+      this.bounds.height + this.point.y < size.height);
   }
-})
+});

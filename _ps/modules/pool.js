@@ -1,18 +1,18 @@
-var Pool = Group.extend({
+module.exports = Group.extend({
   initialize: function(size, options) {
-    Group.prototype.initialize.call(this)
+    Group.prototype.initialize.call(this);
     
     this.padding = new Size(options.padding);
     this.resize(size);
   },
   
   resize: function(size) {
-    this.clear()
+    this.clear();
     
     var rect = Shape.Rectangle(new Point(0, 0), size - this.padding * 2);
     rect.fillColor = 'black';
     
     this.addChild(rect);
-    this.position = view.center
+    this.position = view.center;
   }
 })

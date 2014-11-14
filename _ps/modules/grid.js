@@ -1,4 +1,9 @@
-var Grid = Group.extend({
+var Score = require('./score.js');
+var Tick = require('./tick.js');
+var GridSequence = require('./grid_sequence.js');
+var Logo = require('./logo.js');
+
+module.exports = Group.extend({
   initialize: function(size, options) {
     Group.prototype.initialize.call(this);
 
@@ -6,20 +11,20 @@ var Grid = Group.extend({
     this.padding = options.padding;
     delete options.padding;
 
-    this.sequences = new Group()
-    this.sequences.name = "sequences"
-    this.addChild(this.sequences)
+    this.sequences = new Group();
+    this.sequences.name = "sequences";
+    this.addChild(this.sequences);
 
-    this.addSequence(VerticalScore, 'width', options);
-    this.addSequence(TopTick, 'width', options);
-    this.addSequence(BottomTick, 'width', options);
+    this.addSequence(Score.Vertical, 'width', options);
+    this.addSequence(Tick.Top, 'width', options);
+    this.addSequence(Tick.Bottom, 'width', options);
 
-    this.addSequence(HorizontalScore, 'height', options);
-    this.addSequence(LeftTick, 'height', options);
-    this.addSequence(RightTick, 'height', options);
+    this.addSequence(Score.Horizontal, 'height', options);
+    this.addSequence(Tick.Left, 'height', options);
+    this.addSequence(Tick.Right, 'height', options);
 
-    this.logo = new Logo(new Point(this.gridSpace), this.gridSpace * 3)
-    this.addChild(this.logo)
+    this.logo = new Logo(new Point(this.gridSpace), this.gridSpace * 3);
+    this.addChild(this.logo);
 
     this.resize(size);
   },
@@ -37,7 +42,7 @@ var Grid = Group.extend({
     this.logo.resize(size);
     this.resizeSequences(size);
 
-    this.bounds.center = view.center.round()
+    this.bounds.center = view.center.round();
   },
 
   maximumEdge: function(length) {

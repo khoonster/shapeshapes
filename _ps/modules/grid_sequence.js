@@ -1,4 +1,4 @@
-var GridSequence = Group.extend({
+module.exports = Group.extend({
   initialize: function(line, direction, options) {
     Group.prototype.initialize.call(this);
 
@@ -10,13 +10,13 @@ var GridSequence = Group.extend({
   resize: function(size) {
     this.height = size.height;
     this.width = size.width;
-    this.drawLines(size)
+    this.drawLines(size);
   },
   
   drawLines: function(size) {
     var count = this.linesWithin(size[this.direction]);
 
-    this.clear()
+    this.clear();
 
     for (var i=0; i <= count; i++) {
       var line = this.makeLine(i);
@@ -26,7 +26,7 @@ var GridSequence = Group.extend({
 
   makeLine: function(i) {
     var klass = this.line;
-    var position = i * this.gridSpace / klass.subdivisions
+    var position = i * this.gridSpace / klass.subdivisions;
     var line = new klass(position, new Size(this.width, this.height), i);
     line.strokeColor = 'white';
     line.strokeWidth = klass.getStrokeWidth(i);
@@ -36,4 +36,4 @@ var GridSequence = Group.extend({
   linesWithin: function(l) {
     return Math.floor(l / this.gridSpace * this.line.subdivisions);
   }
-})
+});

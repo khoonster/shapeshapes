@@ -1,6 +1,6 @@
-Shape.Custom = Group.extend({
+module.exports = Group.extend({
   initialize: function(el, size) {
-    Group.prototype.initialize.call(this)
+    Group.prototype.initialize.call(this);
 
     this.path = this.importSVG(el);
     this.path.position = new Point(Math.random() * size.width,
@@ -38,8 +38,8 @@ Shape.Custom = Group.extend({
   },
 
   iterate: function() {
-    this.checkBorders()
-    this.modulateVector()
+    this.checkBorders();
+    this.modulateVector();
     this.path.position += this.vector;
   },
 

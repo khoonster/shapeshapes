@@ -1,4 +1,33 @@
-var Grid = Group.extend({
+(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+var Pool = require('./modules/pool.js');
+var Grid = require('./modules/grid.js');
+var SVGPresenter = require('./modules/svg_presenter.js');
+
+var pool = new Pool(view.size, {
+  padding: new Size(0, 0)
+});
+
+var grid = new Grid(view.size, {
+  gridSpace: 38,
+  padding: new Size(100, 100)
+});
+
+var container = document.getElementsByClassName('shape-container')[0];
+var svgs = container.children;
+var shapes = new SVGPresenter(svgs, view.size);
+
+function onResize(event) {
+  grid.resize(view.size);
+  pool.resize(view.size);
+}
+
+},{"./modules/grid.js":2,"./modules/pool.js":6,"./modules/svg_presenter.js":10}],2:[function(require,module,exports){
+var Score = require('./score.js');
+var Tick = require('./tick.js');
+var GridSequence = require('./grid_sequence.js');
+var Logo = require('./logo.js');
+
+module.exports = Group.extend({
   initialize: function(size, options) {
     Group.prototype.initialize.call(this);
 
@@ -6,20 +35,20 @@ var Grid = Group.extend({
     this.padding = options.padding;
     delete options.padding;
 
-    this.sequences = new Group()
-    this.sequences.name = "sequences"
-    this.addChild(this.sequences)
+    this.sequences = new Group();
+    this.sequences.name = "sequences";
+    this.addChild(this.sequences);
 
-    this.addSequence(VerticalScore, 'width', options);
-    this.addSequence(TopTick, 'width', options);
-    this.addSequence(BottomTick, 'width', options);
+    this.addSequence(Score.Vertical, 'width', options);
+    this.addSequence(Tick.Top, 'width', options);
+    this.addSequence(Tick.Bottom, 'width', options);
 
-    this.addSequence(HorizontalScore, 'height', options);
-    this.addSequence(LeftTick, 'height', options);
-    this.addSequence(RightTick, 'height', options);
+    this.addSequence(Score.Horizontal, 'height', options);
+    this.addSequence(Tick.Left, 'height', options);
+    this.addSequence(Tick.Right, 'height', options);
 
-    this.logo = new Logo(new Point(this.gridSpace), this.gridSpace * 3)
-    this.addChild(this.logo)
+    this.logo = new Logo(new Point(this.gridSpace), this.gridSpace * 3);
+    this.addChild(this.logo);
 
     this.resize(size);
   },
@@ -37,7 +66,7 @@ var Grid = Group.extend({
     this.logo.resize(size);
     this.resizeSequences(size);
 
-    this.bounds.center = view.center.round()
+    this.bounds.center = view.center.round();
   },
 
   maximumEdge: function(length) {
@@ -51,7 +80,8 @@ var Grid = Group.extend({
   }
 })
 
-var GridLine = Path.extend({
+},{"./grid_sequence.js":4,"./logo.js":5,"./score.js":7,"./tick.js":11}],3:[function(require,module,exports){
+module.exports = Path.extend({
   statics: {
     getStrokeWidth: function(i) {
       return this.strokePattern[i % this.subdivisions % this.strokePattern.length]
@@ -89,105 +119,8 @@ var GridLine = Path.extend({
   }
 })
 
-var Score = GridLine.extend({
-  statics: {
-    offsetPattern: [12, 9]
-  },
-  
-  getOffset: function(_, _, i) {
-    var lengths = this.constructor.offsetPattern
-    var index = i % this.constructor.subdivisions % lengths.length
-    return lengths[index]
-  }
-})
-
-var VerticalScore = Score.extend({
-  getAngle: 90,
-  
-  getTop: function() {
-    return - this.get('offset')
-  },
-
-  getLeft: function(position, container) {
-    return position
-  },
-  
-  getLength: function(position, container) {
-    return container.height + this.get('offset') * 2
-  }
-})
-
-var HorizontalScore = Score.extend({
-  getAngle: 0,
-
-  getLeft: function() {
-    return - this.get('offset')
-  },
-  
-  getTop: function(position, container) {
-    return position
-  },
-  
-  getLength: function(position, container) {
-    return container.width + this.get('offset') * 2
-  }
-})
-
-var Tick = GridLine.extend({
-  statics: {
-    strokePattern: [0, 1, 1, 1],
-    subdivisions: 8,
-    lengthPattern: [0, 9, 18, 9]
-  },
-  
-  getLength: function(_, _, i) {
-    var lengths = this.constructor.lengthPattern
-    var index = i % this.constructor.subdivisions % lengths.length
-    return lengths[index]
-  },
-  
-  getOffset: function(_, _, i) {
-    return this.get('length') / 2
-  }
-})
-
-var TopTick = Tick.extend({
-  getAngle: 90,
-
-  getTop: function() {
-    return -this.get('offset')
-  },
-
-  getLeft: function(position) {
-    return position
-  }
-})
-
-var BottomTick = TopTick.extend({
-  getTop: function(position, container) {
-    return container.height - this.get('offset')
-  }
-})
-
-var LeftTick = Tick.extend({
-  getAngle: 0,
-
-  getLeft: function() {
-    return -this.get('offset')
-  },
-  
-  getTop: function(position) {
-    return position
-  }
-})
-
-var RightTick = LeftTick.extend({
-  getLeft: function(position, container) {
-    return container.width - this.get('offset')
-  }
-})
-
-var GridSequence = Group.extend({
+},{}],4:[function(require,module,exports){
+module.exports = Group.extend({
   initialize: function(line, direction, options) {
     Group.prototype.initialize.call(this);
 
@@ -199,13 +132,13 @@ var GridSequence = Group.extend({
   resize: function(size) {
     this.height = size.height;
     this.width = size.width;
-    this.drawLines(size)
+    this.drawLines(size);
   },
   
   drawLines: function(size) {
     var count = this.linesWithin(size[this.direction]);
 
-    this.clear()
+    this.clear();
 
     for (var i=0; i <= count; i++) {
       var line = this.makeLine(i);
@@ -215,7 +148,7 @@ var GridSequence = Group.extend({
 
   makeLine: function(i) {
     var klass = this.line;
-    var position = i * this.gridSpace / klass.subdivisions
+    var position = i * this.gridSpace / klass.subdivisions;
     var line = new klass(position, new Size(this.width, this.height), i);
     line.strokeColor = 'white';
     line.strokeWidth = klass.getStrokeWidth(i);
@@ -225,21 +158,10 @@ var GridSequence = Group.extend({
   linesWithin: function(l) {
     return Math.floor(l / this.gridSpace * this.line.subdivisions);
   }
-})
+});
 
-function LineBounds(from, to, offset) {
-  this.from = new Point(from) + offset;
-  this.to = new Point(to) + offset;
-}
-
-LineBounds.prototype.add = function(point) {
-  var offset = new Point(point);
-  this.from = this.from + offset;
-  this.to = this.to + offset;
-  return this;
-}
-
-var Logo = Group.extend({
+},{}],5:[function(require,module,exports){
+module.exports = Group.extend({
   initialize: function(point, size) {
     point = new Point(point);
     size = new Size(size);
@@ -274,43 +196,91 @@ var Logo = Group.extend({
   
   fitsWithin: function(size) {
     return (this.bounds.width + this.point.x < size.width &&
-      this.bounds.height + this.point.y < size.height)
+      this.bounds.height + this.point.y < size.height);
   }
-})
+});
 
-var Pool = Group.extend({
+},{}],6:[function(require,module,exports){
+module.exports = Group.extend({
   initialize: function(size, options) {
-    Group.prototype.initialize.call(this)
+    Group.prototype.initialize.call(this);
     
     this.padding = new Size(options.padding);
     this.resize(size);
   },
   
   resize: function(size) {
-    this.clear()
+    this.clear();
     
     var rect = Shape.Rectangle(new Point(0, 0), size - this.padding * 2);
     rect.fillColor = 'black';
     
     this.addChild(rect);
-    this.position = view.center
+    this.position = view.center;
   }
 })
 
-var SVGPresenter = Group.extend({
-  initialize: function(svgs, size) {
-    Group.prototype.initialize.call(this)
+},{}],7:[function(require,module,exports){
+var GridLine = require('./grid_line.js');
 
-    for (var i = svgs.length - 1; i >= 0; i--){
-      var shape = new Shape.Custom(svgs[i], size)
-      this.addChild(shape)
-    };
+var BaseScore = GridLine.extend({
+  statics: {
+    offsetPattern: [12, 9]
+  },
+
+  getOffset: function(_, _, i) {
+    var lengths = this.constructor.offsetPattern;
+    var index = i % this.constructor.subdivisions % lengths.length;
+    return lengths[index]
   }
-})
+});
 
-Shape.Custom = Group.extend({
+var VerticalScore = BaseScore.extend({
+  getAngle: 90,
+
+  getTop: function() {
+    return - this.get('offset')
+  },
+
+  getLeft: function(position, container) {
+    return position
+  },
+
+  getLength: function(position, container) {
+    return container.height + this.get('offset') * 2
+  }
+});
+
+var HorizontalScore = BaseScore.extend({
+  getAngle: 0,
+
+  getLeft: function() {
+    return - this.get('offset')
+  },
+
+  getTop: function(position, container) {
+    return position
+  },
+
+  getLength: function(position, container) {
+    return container.width + this.get('offset') * 2
+  }
+});
+
+module.exports = {
+  Vertical: VerticalScore,
+  Horizontal: HorizontalScore
+}
+
+},{"./grid_line.js":3}],8:[function(require,module,exports){
+module.exports = {
+  Custom: require('./shape/custom.js')
+}
+
+},{"./shape/custom.js":9}],9:[function(require,module,exports){
+module.exports = Group.extend({
   initialize: function(el, size) {
-    Group.prototype.initialize.call(this)
+    Group.prototype.initialize.call(this);
 
     this.path = this.importSVG(el);
     this.path.position = new Point(Math.random() * size.width,
@@ -348,8 +318,8 @@ Shape.Custom = Group.extend({
   },
 
   iterate: function() {
-    this.checkBorders()
-    this.modulateVector()
+    this.checkBorders();
+    this.modulateVector();
     this.path.position += this.vector;
   },
 
@@ -381,20 +351,82 @@ Shape.Custom = Group.extend({
   }
 })
 
-var pool = new Pool(view.size, {
-  padding: new Size(0, 0)
+},{}],10:[function(require,module,exports){
+var Shape = require('./shape.js')
+
+module.exports = Group.extend({
+  initialize: function(svgs, size) {
+    Group.prototype.initialize.call(this);
+
+    for (var i = svgs.length - 1; i >= 0; i--){
+      var shape = new Shape.Custom(svgs[i], size);
+      this.addChild(shape);
+    };
+  }
+})
+
+},{"./shape.js":8}],11:[function(require,module,exports){
+var GridLine = require('./grid_line.js');
+
+var Tick = GridLine.extend({
+  statics: {
+    strokePattern: [0, 1, 1, 1],
+    subdivisions: 8,
+    lengthPattern: [0, 9, 18, 9]
+  },
+  
+  getLength: function(_, _, i) {
+    var lengths = this.constructor.lengthPattern;
+    var index = i % this.constructor.subdivisions % lengths.length;
+    return lengths[index]
+  },
+  
+  getOffset: function(_, _, i) {
+    return this.get('length') / 2
+  }
 });
 
-var grid = new Grid(view.size, {
-  gridSpace: 38,
-  padding: new Size(100, 100)
+var TopTick = Tick.extend({
+  getAngle: 90,
+
+  getTop: function() {
+    return -this.get('offset')
+  },
+
+  getLeft: function(position) {
+    return position
+  }
 });
 
-var container = document.getElementsByClassName('shape-container')[0];
-var svgs = container.children;
-var shapes = new SVGPresenter(svgs, view.size);
+var BottomTick = TopTick.extend({
+  getTop: function(position, container) {
+    return container.height - this.get('offset')
+  }
+});
 
-function onResize(event) {
-  grid.resize(view.size);
-  pool.resize(view.size);
+var LeftTick = Tick.extend({
+  getAngle: 0,
+
+  getLeft: function() {
+    return -this.get('offset')
+  },
+  
+  getTop: function(position) {
+    return position
+  }
+});
+
+var RightTick = LeftTick.extend({
+  getLeft: function(position, container) {
+    return container.width - this.get('offset')
+  }
+});
+
+module.exports = {
+  Top: TopTick,
+  Bottom: BottomTick,
+  Left: LeftTick,
+  Right: RightTick
 }
+
+},{"./grid_line.js":3}]},{},[1])

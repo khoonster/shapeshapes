@@ -1,3 +1,7 @@
+var Pool = require('./modules/pool.js');
+var Grid = require('./modules/grid.js');
+var SVGPresenter = require('./modules/svg_presenter.js');
+
 var pool = new Pool(view.size, {
   padding: new Size(0, 0)
 });
