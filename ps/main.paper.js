@@ -65,76 +65,7 @@ var Grid = Group.extend({
 
 module.exports = Grid
 
-},{"./grid/sequencer.js":3,"./logo.js":6,"./score.js":8,"./tick.js":12}],3:[function(require,module,exports){
-var Sequence = require('../grid_sequence.js')
-
-module.exports = Group.extend({
-  initialize: function(sequences, options) {
-    var axes = ['width', 'height'];
-
-    this.options = options;
-
-    Group.prototype.initialize.call(this);
-
-    for (var i=0; i < axes.length; i++) {
-      var axis = axes[i];
-      for (var a=0; a < sequences[axis].length; a++) {
-        this.add(sequences[axis][a], axis, this.options)
-      };
-    };
-  },
-
-  add: function(klass, axis, options) {
-    this.addChild(new Sequence(klass, axis, options))
-  },
-
-  resize: function(size) {
-    for (var i=0; i < this.children.length; i++) {
-      this.children[i].resize(size);
-    }
-  }
-})
-
-},{"../grid_sequence.js":5}],4:[function(require,module,exports){
-module.exports = Path.extend({
-  statics: {
-    getStrokeWidth: function(i) {
-      return this.strokePattern[i % this.subdivisions % this.strokePattern.length]
-    },
-
-    strokePattern: [2, 1],
-    subdivisions: 2
-  },
-
-  initialize: function() {
-    this.args = arguments;
-
-    var left = this.get('left');
-    var top = this.get('top');
-    var angle = this.get('angle');
-    var length = this.get('length');
-
-    var start = new Point(left, top);
-    var vector = new Point({angle: angle, length: length});
-    var end = start + vector;
-
-    Path.prototype.initialize.call(this, {
-      segments: [start, end]
-    });
-  },
-  
-  get: function(attr) {
-    var name = attr.charAt(0).toUpperCase() + attr.slice(1);
-    var val = this['get' + name];
-    if (typeof val == "function") {
-      return val.apply(this, this.args);
-    } else {
-      return val
-    }
-  }
-})
-
-},{}],5:[function(require,module,exports){
+},{"./grid/sequencer.js":4,"./logo.js":6,"./score.js":8,"./tick.js":12}],3:[function(require,module,exports){
 module.exports = Group.extend({
   initialize: function(line, direction, options) {
     Group.prototype.initialize.call(this);
@@ -174,6 +105,75 @@ module.exports = Group.extend({
     return Math.floor(l / this.gridSpace * this.line.subdivisions);
   }
 });
+
+},{}],4:[function(require,module,exports){
+var Sequence = require('./sequence.js')
+
+module.exports = Group.extend({
+  initialize: function(sequences, options) {
+    var axes = ['width', 'height'];
+
+    this.options = options;
+
+    Group.prototype.initialize.call(this);
+
+    for (var i=0; i < axes.length; i++) {
+      var axis = axes[i];
+      for (var a=0; a < sequences[axis].length; a++) {
+        this.add(sequences[axis][a], axis, this.options)
+      };
+    };
+  },
+
+  add: function(klass, axis, options) {
+    this.addChild(new Sequence(klass, axis, options))
+  },
+
+  resize: function(size) {
+    for (var i=0; i < this.children.length; i++) {
+      this.children[i].resize(size);
+    }
+  }
+})
+
+},{"./sequence.js":3}],5:[function(require,module,exports){
+module.exports = Path.extend({
+  statics: {
+    getStrokeWidth: function(i) {
+      return this.strokePattern[i % this.subdivisions % this.strokePattern.length]
+    },
+
+    strokePattern: [2, 1],
+    subdivisions: 2
+  },
+
+  initialize: function() {
+    this.args = arguments;
+
+    var left = this.get('left');
+    var top = this.get('top');
+    var angle = this.get('angle');
+    var length = this.get('length');
+
+    var start = new Point(left, top);
+    var vector = new Point({angle: angle, length: length});
+    var end = start + vector;
+
+    Path.prototype.initialize.call(this, {
+      segments: [start, end]
+    });
+  },
+  
+  get: function(attr) {
+    var name = attr.charAt(0).toUpperCase() + attr.slice(1);
+    var val = this['get' + name];
+    if (typeof val == "function") {
+      return val.apply(this, this.args);
+    } else {
+      return val
+    }
+  }
+})
 
 },{}],6:[function(require,module,exports){
 module.exports = Group.extend({
@@ -236,9 +236,9 @@ module.exports = Group.extend({
 })
 
 },{}],8:[function(require,module,exports){
-var GridLine = require('./grid_line.js');
+var Line = require('./line.js');
 
-var BaseScore = GridLine.extend({
+var BaseScore = Line.extend({
   statics: {
     offsetPattern: [12, 9]
   },
@@ -287,7 +287,7 @@ module.exports = {
   Horizontal: HorizontalScore
 }
 
-},{"./grid_line.js":4}],9:[function(require,module,exports){
+},{"./line.js":5}],9:[function(require,module,exports){
 module.exports = {
   Custom: require('./shape/custom.js')
 }
@@ -383,9 +383,9 @@ module.exports = Group.extend({
 })
 
 },{"./shape.js":9}],12:[function(require,module,exports){
-var GridLine = require('./grid_line.js');
+var Line = require('./line.js');
 
-var Tick = GridLine.extend({
+var Tick = Line.extend({
   statics: {
     strokePattern: [0, 1, 1, 1],
     subdivisions: 8,
@@ -446,4 +446,4 @@ module.exports = {
   Right: RightTick
 }
 
-},{"./grid_line.js":4}]},{},[1])
+},{"./line.js":5}]},{},[1])

@@ -1,6 +1,6 @@
-var GridLine = require('./grid_line.js');
+var Line = require('./line.js');
 
-var Tick = GridLine.extend({
+var Tick = Line.extend({
   statics: {
     strokePattern: [0, 1, 1, 1],
     subdivisions: 8,

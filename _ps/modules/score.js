@@ -1,6 +1,6 @@
-var GridLine = require('./grid_line.js');
+var Line = require('./line.js');
 
-var BaseScore = GridLine.extend({
+var BaseScore = Line.extend({
   statics: {
     offsetPattern: [12, 9]
   },

@@ -1,4 +1,4 @@
-var Sequence = require('../grid_sequence.js')
+var Sequence = require('./sequence.js')
 
 module.exports = Group.extend({
   initialize: function(sequences, options) {
