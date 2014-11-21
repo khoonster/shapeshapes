@@ -9,8 +9,6 @@ var Grid = Group.extend({
   
   initialize: function(size, options) {
     this.gridSpace = options.gridSpace;
-    this.padding = options.padding;
-    delete options.padding;
 
     this.sequencer = new Grid.Sequencer({
       'width': [Score.Vertical, Tick.Top, Tick.Bottom],
@@ -25,15 +23,12 @@ var Grid = Group.extend({
   },
 
   resize: function(size) {
-    size -= this.padding * 2;
     this.width = this.maximumEdge(size.width);
     this.height = this.maximumEdge(size.height);
     size = new Size(this.width, this.height);
 
     this.logo.resize(size);
     this.sequencer.resize(size);
-
-    this.bounds.center = view.center.round();
   },
 
   maximumEdge: function(length) {

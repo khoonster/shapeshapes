@@ -3,20 +3,29 @@ var Pool = require('./modules/pool.js');
 var Grid = require('./modules/grid.js');
 var SVGPresenter = require('./modules/svg_presenter.js');
 
-var pool = new Pool(view.size, {
-  padding: new Size(0, 0)
-});
+Size.prototype.with_padding = function() {
+  if (this.width < 500 || this.height < 400) {
+    var padding = new Size(25, 25);
+  } else {
+    var padding = new Size(100, 100);
+  };
+  return this - padding * 2;
+}
 
-var grid = new Grid(view.size, {
-  gridSpace: 38,
-  padding: new Size(100, 100)
+var pool = new Pool(view.size);
+
+var grid = new Grid(view.size.with_padding(), {
+  gridSpace: 38
 });
 
 var shapes = SVGPresenter.fromClassName('shape-container', view.size);
 
 view.onResize = function(event) {
-  grid.resize(view.size);
+  grid.resize(view.size.with_padding());
+  grid.position = view.center.round();
+  
   pool.resize(view.size);
+  pool.position = view.center;
 }
 
 },{"./modules/grid.js":2,"./modules/pool.js":7,"./modules/svg_presenter.js":11}],2:[function(require,module,exports){
@@ -31,8 +40,6 @@ var Grid = Group.extend({
   
   initialize: function(size, options) {
     this.gridSpace = options.gridSpace;
-    this.padding = options.padding;
-    delete options.padding;
 
     this.sequencer = new Grid.Sequencer({
       'width': [Score.Vertical, Tick.Top, Tick.Bottom],
@@ -47,15 +54,12 @@ var Grid = Group.extend({
   },
 
   resize: function(size) {
-    size -= this.padding * 2;
     this.width = this.maximumEdge(size.width);
     this.height = this.maximumEdge(size.height);
     size = new Size(this.width, this.height);
 
     this.logo.resize(size);
     this.sequencer.resize(size);
-
-    this.bounds.center = view.center.round();
   },
 
   maximumEdge: function(length) {
@@ -219,19 +223,17 @@ module.exports = Group.extend({
 module.exports = Group.extend({
   initialize: function(size, options) {
     Group.prototype.initialize.call(this);
-    
-    this.padding = new Size(options.padding);
+
     this.resize(size);
   },
   
   resize: function(size) {
     this.clear();
     
-    var rect = Shape.Rectangle(new Point(0, 0), size - this.padding * 2);
+    var rect = Shape.Rectangle(new Point(0, 0), size);
     rect.fillColor = 'black';
     
     this.addChild(rect);
-    this.position = view.center;
   }
 })
 
