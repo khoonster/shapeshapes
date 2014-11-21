@@ -4,7 +4,7 @@ email: khoon@khoonster.com
 description: > # this means to ignore newlines until "baseurl:"
   A little site for now...
 baseurl: "" # the subpath of your site, e.g. /blog/
-url: "http://khoonster.github.io/shapeshapes"
+url: "http://www.shapeshapes.com"
 
 # Build settings
 markdown: kramdown
