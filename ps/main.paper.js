@@ -32,13 +32,13 @@ view.onResize = function(event) {
 var Score = require('./score.js');
 var Tick = require('./tick.js');
 var Logo = require('./logo.js');
-var RoundSize = require('./round_size.js')
+var RoundSize = require('./round_size.js');
 
 var Grid = Group.extend({
   statics: {
     Sequencer: require('./grid/sequencer.js')
   },
-  
+
   initialize: function(size, options) {
     this.gridSpace = options.gridSpace;
 
@@ -63,7 +63,7 @@ var Grid = Group.extend({
   }
 })
 
-module.exports = Grid
+module.exports = Grid;
 
 },{"./grid/sequencer.js":4,"./logo.js":6,"./round_size.js":8,"./score.js":9,"./tick.js":13}],3:[function(require,module,exports){
 var Sequence = Group.extend({
@@ -111,9 +111,9 @@ var Sequence = Group.extend({
 module.exports = Sequence;
 
 },{}],4:[function(require,module,exports){
-var Sequence = require('./sequence.js')
+var Sequence = require('./sequence.js');
 
-module.exports = Group.extend({
+var Sequencer = Group.extend({
   initialize: function(sequences, options) {
     var axes = ['width', 'height'];
 
@@ -139,6 +139,8 @@ module.exports = Group.extend({
     }
   }
 })
+
+module.exports = Sequencer;
 
 },{"./sequence.js":3}],5:[function(require,module,exports){
 var Line = Path.extend({
@@ -182,7 +184,7 @@ var Line = Path.extend({
   }
 })
 
-module.exports = Line
+module.exports = Line;
 
 },{}],6:[function(require,module,exports){
 module.exports = Group.extend({
@@ -258,7 +260,7 @@ var RoundSize = Size.extend({
   }
 })
 
-module.exports = RoundSize
+module.exports = RoundSize;
 
 },{}],9:[function(require,module,exports){
 var Line = require('./line.js');

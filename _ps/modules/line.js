@@ -39,4 +39,4 @@ var Line = Path.extend({
   }
 })
 
-module.exports = Line
+module.exports = Line;

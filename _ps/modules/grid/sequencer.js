@@ -1,6 +1,6 @@
-var Sequence = require('./sequence.js')
+var Sequence = require('./sequence.js');
 
-module.exports = Group.extend({
+var Sequencer = Group.extend({
   initialize: function(sequences, options) {
     var axes = ['width', 'height'];
 
@@ -26,3 +26,5 @@ module.exports = Group.extend({
     }
   }
 })
+
+module.exports = Sequencer;

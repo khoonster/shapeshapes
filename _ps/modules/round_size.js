@@ -13,4 +13,4 @@ var RoundSize = Size.extend({
   }
 })
 
-module.exports = RoundSize
+module.exports = RoundSize;

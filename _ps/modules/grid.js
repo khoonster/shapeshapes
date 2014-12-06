@@ -1,13 +1,13 @@
 var Score = require('./score.js');
 var Tick = require('./tick.js');
 var Logo = require('./logo.js');
-var RoundSize = require('./round_size.js')
+var RoundSize = require('./round_size.js');
 
 var Grid = Group.extend({
   statics: {
     Sequencer: require('./grid/sequencer.js')
   },
-  
+
   initialize: function(size, options) {
     this.gridSpace = options.gridSpace;
 
@@ -32,4 +32,4 @@ var Grid = Group.extend({
   }
 })
 
-module.exports = Grid
+module.exports = Grid;

@@ -2,6 +2,7 @@ var gulp = require('gulp');
 var concat = require('gulp-concat');
 var mainBowerFiles = require('main-bower-files');
 var browserify = require('gulp-browserify');
+var jslint = require('gulp-jslint');
 
 var sources = {
   paper: {
@@ -34,6 +35,17 @@ gulp.task('paper', function() {
     .pipe(browserify())
     .pipe(concat('main.paper.js'))
     .pipe(gulp.dest(destinations.paper));
+})
+
+gulp.task('check', function() {
+  gulp.src([sources.paper.main, sources.paper.modules])
+    .pipe(jslint({
+      node: true,
+      white: true
+    }))
+    .on('error', function(error) {
+      console.error(String(error));
+    })
 })
 
 gulp.task('watch', function() {
