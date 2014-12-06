@@ -14,7 +14,7 @@ Size.prototype.with_padding = function() {
 var pool = new Pool(view.size);
 
 var grid = new Grid(view.size.with_padding(), {
-  gridSpace: 38
+  gridSpace: new Size(38, 38)
 });
 
 var shapes = SVGPresenter.fromClassName('shape-container', view.size);

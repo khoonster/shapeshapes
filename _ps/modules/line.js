@@ -1,4 +1,4 @@
-module.exports = Path.extend({
+var Line = Path.extend({
   statics: {
     getStrokeWidth: function(i) {
       return this.strokePattern[i % this.subdivisions % this.strokePattern.length]
@@ -23,6 +23,9 @@ module.exports = Path.extend({
     Path.prototype.initialize.call(this, {
       segments: [start, end]
     });
+    
+    this.strokeColor = 'white';
+    this.strokeWidth = this.constructor.getStrokeWidth(this.args[2]);
   },
   
   get: function(attr) {
@@ -35,3 +38,5 @@ module.exports = Path.extend({
     }
   }
 })
+
+module.exports = Line

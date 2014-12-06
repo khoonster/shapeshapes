@@ -1,6 +1,7 @@
 var Score = require('./score.js');
 var Tick = require('./tick.js');
 var Logo = require('./logo.js');
+var RoundSize = require('./round_size.js')
 
 var Grid = Group.extend({
   statics: {
@@ -23,16 +24,11 @@ var Grid = Group.extend({
   },
 
   resize: function(size) {
-    this.width = this.maximumEdge(size.width);
-    this.height = this.maximumEdge(size.height);
-    size = new Size(this.width, this.height);
+    size = new RoundSize(size, this.gridSpace);
 
-    this.logo.resize(size);
-    this.sequencer.resize(size);
-  },
-
-  maximumEdge: function(length) {
-    return length - length % this.gridSpace;
+    for (var i=0; i < this.children.length; i++) {
+      this.children[i].resize(size);
+    };
   }
 })
 

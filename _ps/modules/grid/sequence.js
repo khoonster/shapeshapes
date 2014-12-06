@@ -1,10 +1,11 @@
-module.exports = Group.extend({
+var Sequence = Group.extend({
   initialize: function(line, direction, options) {
     Group.prototype.initialize.call(this);
 
     this.line = line;
     this.direction = direction;
     this.gridSpace = options.gridSpace;
+    this.interval = this.gridSpace[this.direction] / this.line.subdivisions;
   },
   
   resize: function(size) {
@@ -19,21 +20,24 @@ module.exports = Group.extend({
     this.clear();
 
     for (var i=0; i <= count; i++) {
-      var line = this.makeLine(i);
+      var line = this.drawLine(i);
       this.insertChild(i, line);
     };
   },
 
-  makeLine: function(i) {
+  drawLine: function(i) {
+    var position = i * this.interval;
+    return this.makeLine(position, new Size(this.width, this.height), i);
+  },
+
+  makeLine: function(position, size, i) {
     var klass = this.line;
-    var position = i * this.gridSpace / klass.subdivisions;
-    var line = new klass(position, new Size(this.width, this.height), i);
-    line.strokeColor = 'white';
-    line.strokeWidth = klass.getStrokeWidth(i);
-    return line;
+    return new klass(position, size, i);
   },
 
   linesWithin: function(l) {
-    return Math.floor(l / this.gridSpace * this.line.subdivisions);
+    return Math.floor(l / this.interval);
   }
 });
+
+module.exports = Sequence;
