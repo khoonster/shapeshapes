@@ -1,4 +1,4 @@
-module.exports = Group.extend({
+var CustomShape = Group.extend({
   initialize: function(el, size) {
     Group.prototype.initialize.call(this);
 
@@ -68,3 +68,5 @@ module.exports = Group.extend({
     };
   }
 })
+
+module.exports = CustomShape;

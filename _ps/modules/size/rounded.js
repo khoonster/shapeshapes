@@ -1,4 +1,4 @@
-var RoundSize = Size.extend({
+var RoundedSize = Size.extend({
   initialize: function(size, grid) {
     var grid = new Size(grid);
 
@@ -13,4 +13,4 @@ var RoundSize = Size.extend({
   }
 })
 
-module.exports = RoundSize;
+module.exports = RoundedSize;

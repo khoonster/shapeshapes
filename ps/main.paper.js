@@ -1,53 +1,60 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+'use strict';
+
+var Padded = require('./modules/size/padded.js')
 var Pool = require('./modules/pool.js');
 var Grid = require('./modules/grid.js');
 var SVGPresenter = require('./modules/svg_presenter.js');
 
-Size.prototype.with_padding = function() {
-  if (this.width < 500 || this.height < 400) {
-    var padding = new Size(25, 25);
-  } else {
-    var padding = new Size(100, 100);
-  };
-  return this - padding * 2;
-}
-
 var pool = new Pool(view.size);
 
-var grid = new Grid(view.size.with_padding(), {
+var grid = new Grid(new Padded(view.size), {
   gridSpace: new Size(38, 38)
 });
 
 var shapes = SVGPresenter.fromClassName('shape-container', view.size);
 
 view.onResize = function(event) {
-  grid.resize(view.size.with_padding());
+  var padded = new Padded(view.size);
+
+  grid.resize(padded);
   grid.position = view.center.round();
-  
+
   pool.resize(view.size);
   pool.position = view.center;
 }
 
-},{"./modules/grid.js":2,"./modules/pool.js":7,"./modules/svg_presenter.js":12}],2:[function(require,module,exports){
+},{"./modules/grid.js":2,"./modules/pool.js":7,"./modules/size/padded.js":11,"./modules/svg_presenter.js":13}],2:[function(require,module,exports){
 var Score = require('./score.js');
 var Tick = require('./tick.js');
 var Logo = require('./logo.js');
-var RoundSize = require('./round_size.js');
+var Rounded = require('./size/rounded.js');
+
+var GridLogo = Logo.extend({
+  initialize: function(grid) {
+    var size = new Size(grid.width * 3, grid.height * 2);
+    Logo.prototype.initialize.call(this, new Point(grid), size)
+  }
+})
 
 var Grid = Group.extend({
   statics: {
-    Sequencer: require('./grid/sequencer.js')
+    Sequencer: require('./grid/sequencer.js'),
+    horizontalLines: [Score.Horizontal, Tick.Left, Tick.Right],
+    verticalLines: [Score.Vertical, Tick.Top, Tick.Bottom]
   },
 
   initialize: function(size, options) {
+    var logoSize;
+
     this.gridSpace = options.gridSpace;
 
     this.sequencer = new Grid.Sequencer({
-      'width': [Score.Vertical, Tick.Top, Tick.Bottom],
-      'height': [Score.Horizontal, Tick.Left, Tick.Right]
+      'width': this.constructor.verticalLines,
+      'height': this.constructor.horizontalLines
     }, options);
 
-    this.logo = new Logo(new Point(this.gridSpace), this.gridSpace * 3);
+    this.logo = new GridLogo(this.gridSpace);
 
     Group.prototype.initialize.call(this, [this.sequencer, this.logo]);
 
@@ -55,7 +62,7 @@ var Grid = Group.extend({
   },
 
   resize: function(size) {
-    size = new RoundSize(size, this.gridSpace);
+    size = new Rounded(size, this.gridSpace);
 
     for (var i=0; i < this.children.length; i++) {
       this.children[i].resize(size);
@@ -65,7 +72,7 @@ var Grid = Group.extend({
 
 module.exports = Grid;
 
-},{"./grid/sequencer.js":4,"./logo.js":6,"./round_size.js":8,"./score.js":9,"./tick.js":13}],3:[function(require,module,exports){
+},{"./grid/sequencer.js":4,"./logo.js":6,"./score.js":8,"./size/rounded.js":12,"./tick.js":14}],3:[function(require,module,exports){
 var Sequence = Group.extend({
   initialize: function(line, direction, options) {
     Group.prototype.initialize.call(this);
@@ -189,11 +196,8 @@ module.exports = Line;
 },{}],6:[function(require,module,exports){
 module.exports = Group.extend({
   initialize: function(point, size) {
-    point = new Point(point);
-    size = new Size(size);
-
-    this.point = point;
-    this.size = new Size(size.width, size.height - size.width / 3);
+    this.size = new Size(size);
+    this.point = new Point(point);
 
     var elements = document.getElementsByClassName('logo');
     var logo = elements[0];
@@ -245,24 +249,6 @@ module.exports = Group.extend({
 })
 
 },{}],8:[function(require,module,exports){
-var RoundSize = Size.extend({
-  initialize: function(size, grid) {
-    var grid = new Size(grid);
-
-    Size.prototype.initialize.call(this, size);
-
-    this.width = this.maximum(this.width, grid.width);
-    this.height = this.maximum(this.height, grid.height);
-  },
-
-  maximum: function(length, mod) {
-    return length - length % mod;
-  }
-})
-
-module.exports = RoundSize;
-
-},{}],9:[function(require,module,exports){
 var Line = require('./line.js');
 
 var BaseScore = Line.extend({
@@ -314,13 +300,13 @@ module.exports = {
   Horizontal: HorizontalScore
 }
 
-},{"./line.js":5}],10:[function(require,module,exports){
+},{"./line.js":5}],9:[function(require,module,exports){
 module.exports = {
   Custom: require('./shape/custom.js')
 }
 
-},{"./shape/custom.js":11}],11:[function(require,module,exports){
-module.exports = Group.extend({
+},{"./shape/custom.js":10}],10:[function(require,module,exports){
+var CustomShape = Group.extend({
   initialize: function(el, size) {
     Group.prototype.initialize.call(this);
 
@@ -391,7 +377,48 @@ module.exports = Group.extend({
   }
 })
 
+module.exports = CustomShape;
+
+},{}],11:[function(require,module,exports){
+var PaddedSize = Size.extend({
+  initialize: function(size, grid) {
+    var grid = new Size(grid);
+    var padding;
+
+    Size.prototype.initialize.call(this, size);
+
+    if (this.width < 500 || this.height < 400) {
+      padding = new Size(25, 25);
+    } else {
+      padding = new Size(100, 100);
+    }
+
+    this.width -= padding.width * 2;
+    this.height -= padding.height * 2;
+  }
+})
+
+module.exports = PaddedSize;
+
 },{}],12:[function(require,module,exports){
+var RoundedSize = Size.extend({
+  initialize: function(size, grid) {
+    var grid = new Size(grid);
+
+    Size.prototype.initialize.call(this, size);
+
+    this.width = this.maximum(this.width, grid.width);
+    this.height = this.maximum(this.height, grid.height);
+  },
+
+  maximum: function(length, mod) {
+    return length - length % mod;
+  }
+})
+
+module.exports = RoundedSize;
+
+},{}],13:[function(require,module,exports){
 var Shape = require('./shape.js')
 
 module.exports = Group.extend({
@@ -413,7 +440,7 @@ module.exports = Group.extend({
   }
 })
 
-},{"./shape.js":10}],13:[function(require,module,exports){
+},{"./shape.js":9}],14:[function(require,module,exports){
 var Line = require('./line.js');
 
 var Tick = Line.extend({

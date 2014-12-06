@@ -1,10 +1,7 @@
 module.exports = Group.extend({
   initialize: function(point, size) {
-    point = new Point(point);
-    size = new Size(size);
-
-    this.point = point;
-    this.size = new Size(size.width, size.height - size.width / 3);
+    this.size = new Size(size);
+    this.point = new Point(point);
 
     var elements = document.getElementsByClassName('logo');
     var logo = elements[0];
