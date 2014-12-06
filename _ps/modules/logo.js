@@ -1,4 +1,4 @@
-module.exports = Group.extend({
+var Logo = Group.extend({
   initialize: function(point, size) {
     this.size = new Size(size);
     this.point = new Point(point);
@@ -33,3 +33,5 @@ module.exports = Group.extend({
       this.bounds.height + this.point.y < size.height);
   }
 });
+
+module.exports = Logo;

@@ -12,19 +12,15 @@ var GridLogo = Logo.extend({
 
 var Grid = Group.extend({
   statics: {
-    Sequencer: require('./grid/sequencer.js'),
-    horizontalLines: [Score.Horizontal, Tick.Left, Tick.Right],
-    verticalLines: [Score.Vertical, Tick.Top, Tick.Bottom]
+    Sequencer: require('./grid/sequencer.js')
   },
 
   initialize: function(size, options) {
-    var logoSize;
-
     this.gridSpace = options.gridSpace;
 
     this.sequencer = new Grid.Sequencer({
-      'width': this.constructor.verticalLines,
-      'height': this.constructor.horizontalLines
+      'width': options.x,
+      'height': options.y
     }, options);
 
     this.logo = new GridLogo(this.gridSpace);

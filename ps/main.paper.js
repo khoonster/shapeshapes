@@ -1,6 +1,8 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 'use strict';
 
+var Score = require('./modules/score.js');
+var Tick = require('./modules/tick.js');
 var Padded = require('./modules/size/padded.js')
 var Pool = require('./modules/pool.js');
 var Grid = require('./modules/grid.js');
@@ -9,7 +11,9 @@ var SVGPresenter = require('./modules/svg_presenter.js');
 var pool = new Pool(view.size);
 
 var grid = new Grid(new Padded(view.size), {
-  gridSpace: new Size(38, 38)
+  gridSpace: new Size(38, 38),
+  y: [Score.Horizontal, Tick.Left, Tick.Right],
+  x: [Score.Vertical, Tick.Top, Tick.Bottom]
 });
 
 var shapes = SVGPresenter.fromClassName('shape-container', view.size);
@@ -19,12 +23,12 @@ view.onResize = function(event) {
 
   grid.resize(padded);
   grid.position = view.center.round();
-
+  
   pool.resize(view.size);
   pool.position = view.center;
 }
 
-},{"./modules/grid.js":2,"./modules/pool.js":7,"./modules/size/padded.js":11,"./modules/svg_presenter.js":13}],2:[function(require,module,exports){
+},{"./modules/grid.js":2,"./modules/pool.js":7,"./modules/score.js":8,"./modules/size/padded.js":11,"./modules/svg_presenter.js":13,"./modules/tick.js":14}],2:[function(require,module,exports){
 var Score = require('./score.js');
 var Tick = require('./tick.js');
 var Logo = require('./logo.js');
@@ -39,19 +43,15 @@ var GridLogo = Logo.extend({
 
 var Grid = Group.extend({
   statics: {
-    Sequencer: require('./grid/sequencer.js'),
-    horizontalLines: [Score.Horizontal, Tick.Left, Tick.Right],
-    verticalLines: [Score.Vertical, Tick.Top, Tick.Bottom]
+    Sequencer: require('./grid/sequencer.js')
   },
 
   initialize: function(size, options) {
-    var logoSize;
-
     this.gridSpace = options.gridSpace;
 
     this.sequencer = new Grid.Sequencer({
-      'width': this.constructor.verticalLines,
-      'height': this.constructor.horizontalLines
+      'width': options.x,
+      'height': options.y
     }, options);
 
     this.logo = new GridLogo(this.gridSpace);
@@ -194,7 +194,7 @@ var Line = Path.extend({
 module.exports = Line;
 
 },{}],6:[function(require,module,exports){
-module.exports = Group.extend({
+var Logo = Group.extend({
   initialize: function(point, size) {
     this.size = new Size(size);
     this.point = new Point(point);
@@ -229,6 +229,8 @@ module.exports = Group.extend({
       this.bounds.height + this.point.y < size.height);
   }
 });
+
+module.exports = Logo;
 
 },{}],7:[function(require,module,exports){
 module.exports = Group.extend({
