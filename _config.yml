@@ -16,3 +16,4 @@ exclude:
   - README*
   - gulpfile.js
   - package.json
+  - CNAME
