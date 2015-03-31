@@ -8,7 +8,7 @@ var Logo = Group.extend({
     var svg = logo.children[0];
 
     var background = new Shape.Rectangle(new Point(0, 0), this.size);
-    background.fillColor = '000099';
+    background.fillColor = '#000099';
     background.strokeWidth = 2;
     background.strokeColor = 'white';
 

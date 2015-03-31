@@ -9,7 +9,7 @@ module.exports = Group.extend({
     this.clear();
 
     var rect = Shape.Rectangle(new Point(0, 0), size);
-    rect.fillColor = '000099';
+    rect.fillColor = '#000099';
 
     this.addChild(rect);
   }
