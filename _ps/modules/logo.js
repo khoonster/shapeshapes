@@ -8,7 +8,7 @@ var Logo = Group.extend({
     var svg = logo.children[0];
 
     var background = new Shape.Rectangle(new Point(0, 0), this.size);
-    background.fillColor = 'black';
+    background.fillColor = '000099';
     background.strokeWidth = 2;
     background.strokeColor = 'white';
 
@@ -22,12 +22,12 @@ var Logo = Group.extend({
       position: this.point
     });
   },
-  
+
   resize: function(size) {
     this.bounds.point = this.point;
     this.visible = this.fitsWithin(size);
   },
-  
+
   fitsWithin: function(size) {
     return (this.bounds.width + this.point.x < size.width &&
       this.bounds.height + this.point.y < size.height);

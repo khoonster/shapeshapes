@@ -4,13 +4,13 @@ module.exports = Group.extend({
 
     this.resize(size);
   },
-  
+
   resize: function(size) {
     this.clear();
-    
+
     var rect = Shape.Rectangle(new Point(0, 0), size);
-    rect.fillColor = 'black';
-    
+    rect.fillColor = '000099';
+
     this.addChild(rect);
   }
 })
