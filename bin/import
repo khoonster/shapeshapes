@@ -10,28 +10,61 @@ unless name && source
   abort
 end
 
-puts name
-puts source
-
 time = Time.now
+
 ext = "html"
 slug = "#{time.strftime('%Y-%m-%d')}-#{ActiveSupport::Inflector.parameterize(name)}"
+post_path = "_posts/#{slug}.#{ext}"
 
-File.open("_posts/#{slug}.#{ext}", "w") do |exhibition|
-  exhibition << <<-HEAD
+class PostHeader
+
+  attr_accessor :name, :time
+
+  def initialize name:, time:
+    @name = name
+    @time = time
+  end
+
+  def to_s
+    <<-HEAD
 ---
 title: #{name.inspect}
 date: #{time.strftime('%Y-%m-%d %X')}
 ---
-  HEAD
+    HEAD
+  end
+
+end
+
+class SanitizedSVG
+
+  DELETIONS = [
+    /^---.*---\n/m,
+    /^<!\-\-.*\-\->/m,
+    /^<\?xml version="1\.0" encoding="utf\-8"\?>/,
+    /id=".*?"/
+  ]
+
+  attr_reader :source
+
+  def initialize source
+    @source = source
+  end
+
+  def to_s
+    DELETIONS.each_with_object(source) do |d, text|
+      text.gsub!(d, '')
+    end
+  end
+
+end
+
+File.open(post_path, "w") do |exhibition|
+  exhibition << PostHeader.new(name: name, time: time)
 
   Dir.glob("#{source}/*.svg") do |filepath|
-    svg = File.open(filepath) do |part|
-      text = part.read
-      text.gsub!(/^---.*---\n/m, '')
-      text.each_line do |line|
-        exhibition << line
-      end
+    File.open(filepath) do |part|
+      exhibition << SanitizedSVG.new(part.read)
     end
   end
 end
