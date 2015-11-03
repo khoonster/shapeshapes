@@ -1,7 +1,7 @@
-khoonster.com
-=============
+Shape Shapes
+============
 
-These are the files that make up the future [khoonster.com](http://khoonster.com)!
+These are the files that make up [shapeshapes.com](http://shapeshapes.com)!
 
 Development
 ===========
