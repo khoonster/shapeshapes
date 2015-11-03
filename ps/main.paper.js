@@ -7,8 +7,13 @@ var Padded = require('./modules/size/padded.js')
 var Pool = require('./modules/pool.js');
 var Grid = require('./modules/grid.js');
 var SVGPresenter = require('./modules/svg_presenter.js');
+var Background = require('./modules/background.js');
 
-var pool = new Pool(view.size);
+var background = new Background();
+
+var pool = new Pool(view.size, {
+  fillColor: background.color
+});
 
 var grid = new Grid(new Padded(view.size), {
   gridSpace: new Size(38, 38),
@@ -23,12 +28,19 @@ view.onResize = function(event) {
 
   grid.resize(padded);
   grid.position = view.center.round();
-  
+
   pool.resize(view.size);
   pool.position = view.center;
 }
 
-},{"./modules/grid.js":2,"./modules/pool.js":7,"./modules/score.js":8,"./modules/size/padded.js":11,"./modules/svg_presenter.js":13,"./modules/tick.js":14}],2:[function(require,module,exports){
+},{"./modules/background.js":2,"./modules/grid.js":3,"./modules/pool.js":8,"./modules/score.js":9,"./modules/size/padded.js":12,"./modules/svg_presenter.js":14,"./modules/tick.js":15}],2:[function(require,module,exports){
+var Background = function() {
+  this.color = document.body.getAttribute('data-fill-color')
+}
+
+module.exports = Background;
+
+},{}],3:[function(require,module,exports){
 var Score = require('./score.js');
 var Tick = require('./tick.js');
 var Logo = require('./logo.js');
@@ -72,7 +84,7 @@ var Grid = Group.extend({
 
 module.exports = Grid;
 
-},{"./grid/sequencer.js":4,"./logo.js":6,"./score.js":8,"./size/rounded.js":12,"./tick.js":14}],3:[function(require,module,exports){
+},{"./grid/sequencer.js":5,"./logo.js":7,"./score.js":9,"./size/rounded.js":13,"./tick.js":15}],4:[function(require,module,exports){
 var Sequence = Group.extend({
   initialize: function(line, direction, options) {
     Group.prototype.initialize.call(this);
@@ -117,7 +129,7 @@ var Sequence = Group.extend({
 
 module.exports = Sequence;
 
-},{}],4:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 var Sequence = require('./sequence.js');
 
 var Sequencer = Group.extend({
@@ -149,7 +161,7 @@ var Sequencer = Group.extend({
 
 module.exports = Sequencer;
 
-},{"./sequence.js":3}],5:[function(require,module,exports){
+},{"./sequence.js":4}],6:[function(require,module,exports){
 var Line = Path.extend({
   statics: {
     getStrokeWidth: function(i) {
@@ -193,7 +205,9 @@ var Line = Path.extend({
 
 module.exports = Line;
 
-},{}],6:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
+var Background = require('./background.js');
+
 var Logo = Group.extend({
   initialize: function(point, size) {
     this.size = new Size(size);
@@ -203,10 +217,12 @@ var Logo = Group.extend({
     var logo = elements[0];
     var svg = logo.children[0];
 
-    var background = new Shape.Rectangle(new Point(0, 0), this.size);
-    background.fillColor = '#000099';
-    background.strokeWidth = 2;
-    background.strokeColor = 'white';
+    var background = new Background();
+
+    var fill = new Shape.Rectangle(new Point(0, 0), this.size);
+    fill.fillColor = background.color;
+    fill.strokeWidth = 2;
+    fill.strokeColor = 'white';
 
     var text = project.importSVG(svg);
     text.fillColor = 'white';
@@ -214,7 +230,7 @@ var Logo = Group.extend({
     text.scale(1.8);
 
     Group.prototype.initialize.call(this, {
-      children: [background, text],
+      children: [fill, text],
       position: this.point
     });
   },
@@ -232,10 +248,12 @@ var Logo = Group.extend({
 
 module.exports = Logo;
 
-},{}],7:[function(require,module,exports){
-module.exports = Group.extend({
+},{"./background.js":2}],8:[function(require,module,exports){
+var Pool = Group.extend({
   initialize: function(size, options) {
     Group.prototype.initialize.call(this);
+
+    this.options = options;
 
     this.resize(size);
   },
@@ -244,13 +262,15 @@ module.exports = Group.extend({
     this.clear();
 
     var rect = Shape.Rectangle(new Point(0, 0), size);
-    rect.fillColor = '#000099';
+    rect.fillColor = this.options.fillColor;
 
     this.addChild(rect);
   }
 })
 
-},{}],8:[function(require,module,exports){
+module.exports = Pool;
+
+},{}],9:[function(require,module,exports){
 var Line = require('./line.js');
 
 var BaseScore = Line.extend({
@@ -302,12 +322,12 @@ module.exports = {
   Horizontal: HorizontalScore
 }
 
-},{"./line.js":5}],9:[function(require,module,exports){
+},{"./line.js":6}],10:[function(require,module,exports){
 module.exports = {
   Custom: require('./shape/custom.js')
 }
 
-},{"./shape/custom.js":10}],10:[function(require,module,exports){
+},{"./shape/custom.js":11}],11:[function(require,module,exports){
 var CustomShape = Group.extend({
   initialize: function(el, size) {
     Group.prototype.initialize.call(this);
@@ -381,7 +401,7 @@ var CustomShape = Group.extend({
 
 module.exports = CustomShape;
 
-},{}],11:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 var PaddedSize = Size.extend({
   initialize: function(size, grid) {
     var grid = new Size(grid);
@@ -402,7 +422,7 @@ var PaddedSize = Size.extend({
 
 module.exports = PaddedSize;
 
-},{}],12:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 var RoundedSize = Size.extend({
   initialize: function(size, grid) {
     var grid = new Size(grid);
@@ -420,7 +440,7 @@ var RoundedSize = Size.extend({
 
 module.exports = RoundedSize;
 
-},{}],13:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 var Shape = require('./shape.js')
 
 module.exports = Group.extend({
@@ -442,7 +462,7 @@ module.exports = Group.extend({
   }
 })
 
-},{"./shape.js":9}],14:[function(require,module,exports){
+},{"./shape.js":10}],15:[function(require,module,exports){
 var Line = require('./line.js');
 
 var Tick = Line.extend({
@@ -506,4 +526,4 @@ module.exports = {
   Right: RightTick
 }
 
-},{"./line.js":5}]},{},[1])
+},{"./line.js":6}]},{},[1])

@@ -6,8 +6,13 @@ var Padded = require('./modules/size/padded.js')
 var Pool = require('./modules/pool.js');
 var Grid = require('./modules/grid.js');
 var SVGPresenter = require('./modules/svg_presenter.js');
+var Background = require('./modules/background.js');
 
-var pool = new Pool(view.size);
+var background = new Background();
+
+var pool = new Pool(view.size, {
+  fillColor: background.color
+});
 
 var grid = new Grid(new Padded(view.size), {
   gridSpace: new Size(38, 38),
@@ -22,7 +27,7 @@ view.onResize = function(event) {
 
   grid.resize(padded);
   grid.position = view.center.round();
-  
+
   pool.resize(view.size);
   pool.position = view.center;
 }
