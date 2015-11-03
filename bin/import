@@ -1,0 +1,37 @@
+#! /usr/bin/env ruby
+
+require 'date'
+require 'active_support/all'
+
+name, source = ARGV
+
+unless name && source
+  puts 'Usage: bin/import [name] [directory]'
+  abort
+end
+
+puts name
+puts source
+
+time = Time.now
+ext = "html"
+slug = "#{time.strftime('%Y-%m-%d')}-#{ActiveSupport::Inflector.parameterize(name)}"
+
+File.open("_posts/#{slug}.#{ext}", "w") do |exhibition|
+  exhibition << <<-HEAD
+---
+title: #{name.inspect}
+date: #{time.strftime('%Y-%m-%d %X')}
+---
+  HEAD
+
+  Dir.glob("#{source}/*.svg") do |filepath|
+    svg = File.open(filepath) do |part|
+      text = part.read
+      text.gsub!(/^---.*---\n/m, '')
+      text.each_line do |line|
+        exhibition << line
+      end
+    end
+  end
+end

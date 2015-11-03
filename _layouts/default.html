@@ -14,9 +14,7 @@
     {% include footer.html %}
 
     <div class="shape-container">
-      {% for post in site.posts %}
-        {{ post.content }}
-      {% endfor %}
+      {{ site.posts.last.content }}
     </div>
 
   </body>

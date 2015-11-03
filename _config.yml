@@ -9,11 +9,12 @@ url: "http://www.shapeshapes.com"
 # Build settings
 markdown: kramdown
 exclude:
+  - bin
   - bower_components
   - bower.json
-  - Gemfile*
-  - LICENSE
-  - README*
-  - gulpfile.js
-  - package.json
   - CNAME
+  - Gemfile*
+  - gulpfile.js
+  - LICENSE
+  - package.json
+  - README*
