@@ -35,7 +35,7 @@ view.onResize = function(event) {
 
 },{"./modules/background.js":2,"./modules/grid.js":3,"./modules/pool.js":8,"./modules/score.js":9,"./modules/size/padded.js":12,"./modules/svg_presenter.js":14,"./modules/tick.js":15}],2:[function(require,module,exports){
 var Background = function() {
-  this.color = document.body.getAttribute('data-fill-color')
+  this.color = document.body.getAttribute('data-fill-color') || "#111111";
 }
 
 module.exports = Background;
