@@ -3,7 +3,7 @@
 
   {% include head.html %}
 
-  <body data-fill-color="{{ site.posts.last.background }}">
+  <body data-fill-color="{{ site.posts.first.background }}">
 
     {% include logo.html %}
 
@@ -25,7 +25,7 @@
       </div>
 
       <div class="shape-container">
-        {{ site.posts.last.content }}
+        {{ site.posts.first.content }}
       </div>
     </div>
 
