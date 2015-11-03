@@ -13,8 +13,20 @@
 
     {% include footer.html %}
 
-    <div class="shape-container">
-      {{ site.posts.last.content }}
+    <div class="exhibition">
+      <div class="details">
+        <canvas id="grid" data-paper-resize></canvas>
+
+        <style media="screen">
+          .exhibition .details {
+            background-color: {{ site.posts.last.background }};
+          }
+        </style>
+      </div>
+
+      <div class="shape-container">
+        {{ site.posts.last.content }}
+      </div>
     </div>
 
   </body>
