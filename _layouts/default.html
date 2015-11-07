@@ -15,11 +15,13 @@
 
     <div class="exhibition">
       <div class="details">
-        <canvas id="grid" data-paper-resize></canvas>
+        <script src="/ps/grid.paper.js" type="text/paperscript" canvas="grid-{{ site.posts.first.slug }}"></script>
+
+        <canvas id="grid-{{ site.posts.first.slug }}" data-paper-resize></canvas>
 
         <style media="screen">
           .exhibition .details {
-            background-color: {{ site.posts.last.background }};
+            background-color: {{ site.posts.first.background }};
           }
         </style>
       </div>

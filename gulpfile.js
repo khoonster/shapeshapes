@@ -7,7 +7,8 @@ var jslint = require('gulp-jslint');
 var sources = {
   paper: {
     main: '_ps/main.js',
-    modules: '_ps/modules/**/*.js'
+    grid: '_ps/grid.js',
+    modules: '_ps/modules/**/*.js',
   },
   javascript: '_js/main.js'
 }
@@ -31,14 +32,18 @@ gulp.task('vendor', function() {
 })
 
 gulp.task('paper', function() {
-  gulp.src([sources.paper.main])
-    .pipe(browserify())
-    .pipe(concat('main.paper.js'))
-    .pipe(gulp.dest(destinations.paper));
+  var roots = [sources.paper.main, sources.paper.grid]
+
+  roots.forEach(function(root) {
+    gulp.src([root])
+      .pipe(browserify())
+      .pipe(concat(toPaperName(root)))
+      .pipe(gulp.dest(destinations.paper));
+  });
 })
 
 gulp.task('check', function() {
-  gulp.src([sources.paper.main, sources.paper.modules])
+  gulp.src([sources.paper.main, sources.paper.grid, sources.paper.modules])
     .pipe(jslint({
       node: true,
       white: true
@@ -49,8 +54,17 @@ gulp.task('check', function() {
 })
 
 gulp.task('watch', function() {
-  gulp.watch([sources.paper.main, sources.paper.modules], ['paper']);
+  gulp.watch([sources.paper.main, sources.paper.grid, sources.paper.modules], ['paper']);
   gulp.watch(sources.javascript, ['javascript']);
 })
 
 gulp.task('default', ['javascript', 'vendor', 'paper', 'watch'])
+
+function toPaperName(path) {
+  var filename = path.split('/')[1];
+  var parts = filename.split('.');
+
+  parts.splice(1, 0, 'paper');
+
+  return parts.join('.');
+}
