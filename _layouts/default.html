@@ -19,10 +19,32 @@
 
         <canvas id="grid-{{ site.posts.first.title }}" data-paper-resize></canvas>
 
+        <div class="description">
+          <div class="title">
+            <label>Currently showing</label>
+            {{ site.posts.first.title }}
+          </div>
+
+          <div class="artist">
+            <label>by</label>
+            {{ site.posts.first.artist }}
+          </div>
+
+          <div class="duration">
+            <label>on</label>
+            Now &ndash; {{ site.posts.first.end_date | date: "%B %-d, %Y" }}
+          </div>
+
+          <div class="site-description">
+            {{ site.description | markdownify }}
+          </div>
+        </div>
+
         <button class="close"></button>
 
         <style media="screen">
-          .exhibition .details {
+          .exhibition .details,
+          .exhibition .description {
             background-color: {{ site.posts.first.background }};
           }
         </style>

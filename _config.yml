@@ -1,8 +1,7 @@
 # Site settings
 title: Shape Shapes
 email: khoon@khoonster.com
-description: > # this means to ignore newlines until "baseurl:"
-  A little site for now...
+description: Shape Shapes is an exhibition platform for artist's shapes.
 baseurl: "" # the subpath of your site, e.g. /blog/
 url: "http://www.shapeshapes.com"
 
