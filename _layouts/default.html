@@ -15,9 +15,11 @@
 
     <div class="exhibition">
       <div class="details">
-        <script src="/ps/grid.paper.js" type="text/paperscript" canvas="grid-{{ site.posts.first.slug }}"></script>
+        <script src="/ps/grid.paper.js" type="text/paperscript" canvas="grid-{{ site.posts.first.title }}"></script>
 
-        <canvas id="grid-{{ site.posts.first.slug }}" data-paper-resize></canvas>
+        <canvas id="grid-{{ site.posts.first.title }}" data-paper-resize></canvas>
+
+        <button class="close"></button>
 
         <style media="screen">
           .exhibition .details {
