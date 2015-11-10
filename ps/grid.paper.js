@@ -24,10 +24,6 @@ view.onResize = function(event) {
   closeButton.style.marginTop = (-padded.height / 2 - 38 - 19) + "px";
   closeButton.style.top = "50%";
   closeButton.style.left = "50%";
-
-  console.log(view.size.height, padded.height);
-
-  console.log(closeButton);
 }
 
 },{"./modules/cutting_mat.js":3,"./modules/size/padded.js":10}],2:[function(require,module,exports){

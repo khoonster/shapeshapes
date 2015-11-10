@@ -32,10 +32,14 @@ body {
   left: 0;
 }
 
+.exhibition .details.is-dismissed {
+  display: none;
+}
+
 .details .close {
   position: absolute;
-  top: 20px;
-  right: 20px;
+  top: -200px;
+  right: -200px;
   height: 38px;
   width: 38px;
   background: transparent url('/svg/close.svg') no-repeat scroll 0 0;
