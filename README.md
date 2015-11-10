@@ -11,5 +11,11 @@ npm install
 bundle
 bower update
 gulp vendor
-bundle exec jekyll serve
+bundle exec jekyll server
+```
+
+To view draft exhibitions, run `jekyll server` with the `--drafts` flag:
+
+```
+bundle exec jekyll server --drafts
 ```
