@@ -40,6 +40,8 @@ body {
   width: 38px;
   background: transparent url('/svg/close.svg') no-repeat scroll 0 0;
   border: none;
+  cursor: pointer;
+  padding: 0;
 }
 
 .shape-container {
