@@ -3,6 +3,15 @@
 ---
 @charset "utf-8";
 
+@font-face {
+  font-family: "Valence Grotesque";
+  src: url("/fonts/valence_grotesque-bold.eot");
+  src: url("/fonts/valence_grotesque-bold.eot?#iefix") format("embedded-opentype"),
+       url("/fonts/valence_grotesque-bold.woff2") format("woff2"),
+       url("/fonts/valence_grotesque-bold.woff") format("woff");
+  font-weight: bold;
+}
+
 body {
   font-family: "Valence Grotesque", sans-serif;
   font-weight: bold;
@@ -45,7 +54,7 @@ body {
   right: -200px;
   height: 38px;
   width: 38px;
-  background: transparent url('/svg/close.svg') no-repeat scroll 0 0;
+  background: transparent url("/svg/close.svg") no-repeat scroll 0 0;
   border: none;
   cursor: pointer;
   padding: 0;
@@ -64,11 +73,11 @@ body {
   box-sizing: border-box;
   font-size: 17px;
   line-height: 1.3;
+  letter-spacing: 0.1em;
 
   label {
     display: block;
-    font-size: 17px;
-    letter-spacing: 0.05em;
+    font-size: 16px;
   }
 
   .site-description {
@@ -81,7 +90,6 @@ body {
 .details .description .duration {
   font-size: 32px;
   margin-bottom: 33px;
-  letter-spacing: 0.1em;
 }
 
 .shape-container {
