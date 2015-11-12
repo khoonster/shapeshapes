@@ -13,41 +13,38 @@
 
     {% include footer.html %}
 
-    <div class="exhibition">
+    <div class="exhibition exhibition-{{ site.posts.first.title | slugify }}">
       <div class="details">
-        <script src="/ps/grid.paper.js" type="text/paperscript" canvas="grid-{{ site.posts.first.title }}"></script>
+        <script src="/ps/grid.paper.js" type="text/paperscript" canvas="grid-{{ site.posts.first.title | slugify }}"></script>
 
-        <canvas id="grid-{{ site.posts.first.title }}" data-paper-resize></canvas>
+        <canvas id="grid-{{ site.posts.first.title | slugify }}" data-paper-resize></canvas>
 
-        <div class="description">
-          <div class="title">
-            <label>Currently showing</label>
-            {{ site.posts.first.title }}
+        <div class="inset">
+          <div class="description">
+            <div class="title">
+              <label>Currently showing</label>
+              {{ site.posts.first.title }}
+            </div>
+
+            <div class="artist">
+              <label>by</label>
+              {{ site.posts.first.artist }}
+            </div>
+
+            <div class="duration">
+              <label>on</label>
+              Now &ndash; {{ site.posts.first.end_date | date: "%B %-d, %Y" }}
+            </div>
+
+            <div class="site-description">
+              {{ site.description | markdownify }}
+            </div>
           </div>
 
-          <div class="artist">
-            <label>by</label>
-            {{ site.posts.first.artist }}
-          </div>
-
-          <div class="duration">
-            <label>on</label>
-            Now &ndash; {{ site.posts.first.end_date | date: "%B %-d, %Y" }}
-          </div>
-
-          <div class="site-description">
-            {{ site.description | markdownify }}
-          </div>
+          {% include newsletter_form.html %}
         </div>
 
         <button class="close"></button>
-
-        <style media="screen">
-          .exhibition .details,
-          .exhibition .description {
-            background-color: {{ site.posts.first.background }};
-          }
-        </style>
       </div>
 
       <div class="shape-container">

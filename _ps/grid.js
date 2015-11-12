@@ -13,7 +13,7 @@ var gridSize = new Size(38, 38);
 var mat = new CuttingMat(constrainToMaximum(new Padded(view.size)), gridSize);
 
 var closeButton = document.querySelector('.details .close');
-var description = document.querySelector('.details .description');
+var description = document.querySelector('.details .inset');
 
 view.onResize = function(event) {
   var padded = constrainToMaximum(new Padded(view.size));
