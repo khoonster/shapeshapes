@@ -3,9 +3,9 @@
 $: << File.absolute_path('./bin/lib')
 
 require 'date'
-require 'active_support/all'
 
 require 'post_header'
+require 'post_slug'
 require 'exhibition'
 
 name, source = ARGV
@@ -16,7 +16,7 @@ unless name && source
 end
 
 time = Time.now
-slug = "#{time.strftime('%Y-%m-%d')}-#{ActiveSupport::Inflector.parameterize(name)}"
+slug = PostSlug.new name, time
 
 header = PostHeader.new({
   title: name,
