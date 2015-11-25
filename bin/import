@@ -3,15 +3,24 @@
 $: << File.absolute_path('./bin/lib')
 
 require 'date'
+require 'slop'
 
 require 'post_header'
 require 'post_slug'
 require 'exhibition'
 
-name, source = ARGV
+opts = Slop.parse do |o|
+  o.banner = 'Usage: bin/import name directory [options]'
+  o.on '--help', 'this help message' do
+    puts o
+    exit
+  end
+end
+
+name, source = opts.arguments
 
 unless name && source
-  puts 'Usage: bin/import [name] [directory]'
+  puts opts
   abort
 end
 
