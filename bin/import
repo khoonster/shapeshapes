@@ -1,7 +1,12 @@
 #! /usr/bin/env ruby
 
+$: << File.absolute_path('./bin/lib')
+
 require 'date'
 require 'active_support/all'
+
+require 'post_header'
+require 'exhibition'
 
 name, source = ARGV
 
@@ -11,60 +16,16 @@ unless name && source
 end
 
 time = Time.now
-
-ext = "html"
 slug = "#{time.strftime('%Y-%m-%d')}-#{ActiveSupport::Inflector.parameterize(name)}"
-post_path = "_posts/#{slug}.#{ext}"
 
-class PostHeader
+header = PostHeader.new({
+  name: name,
+  time: time
+})
 
-  attr_accessor :name, :time
+exhibition = Exhibition.new({
+  header: header,
+  source: Dir.glob("#{source}/*.svg")
+})
 
-  def initialize name:, time:
-    @name = name
-    @time = time
-  end
-
-  def to_s
-    <<-HEAD
----
-title: #{name.inspect}
-date: #{time.strftime('%Y-%m-%d %X')}
----
-    HEAD
-  end
-
-end
-
-class SanitizedSVG
-
-  DELETIONS = [
-    /^---.*---\n/m,
-    /^<!\-\-.*\-\->/m,
-    /^<\?xml version="1\.0" encoding="utf\-8"\?>/,
-    /id=".*?"/
-  ]
-
-  attr_reader :source
-
-  def initialize source
-    @source = source
-  end
-
-  def to_s
-    DELETIONS.each_with_object(source) do |d, text|
-      text.gsub!(d, '')
-    end
-  end
-
-end
-
-File.open(post_path, "w") do |exhibition|
-  exhibition << PostHeader.new(name: name, time: time)
-
-  Dir.glob("#{source}/*.svg") do |filepath|
-    File.open(filepath) do |part|
-      exhibition << SanitizedSVG.new(part.read)
-    end
-  end
-end
+exhibition.write "_posts/#{slug}.html"
