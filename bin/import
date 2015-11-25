@@ -11,6 +11,7 @@ require 'exhibition'
 
 opts = Slop.parse do |o|
   o.banner = 'Usage: bin/import name directory [options]'
+  o.bool '--draft', 'create a draft post', default: false
   o.on '--help', 'this help message' do
     puts o
     exit
@@ -18,6 +19,7 @@ opts = Slop.parse do |o|
 end
 
 name, source = opts.arguments
+dirname = opts[:draft] ? '_drafts' : '_posts'
 
 unless name && source
   puts opts
@@ -37,4 +39,4 @@ exhibition = Exhibition.new({
   source: Dir.glob("#{source}/*.svg")
 })
 
-exhibition.write "_posts/#{slug}.html"
+exhibition.write "#{dirname}/#{slug}.html"
