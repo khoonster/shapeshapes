@@ -2,7 +2,6 @@
 
 $: << File.absolute_path('./bin/lib')
 
-require 'date'
 require 'slop'
 
 require 'post_header'
