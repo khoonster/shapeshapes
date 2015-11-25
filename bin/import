@@ -19,8 +19,8 @@ time = Time.now
 slug = "#{time.strftime('%Y-%m-%d')}-#{ActiveSupport::Inflector.parameterize(name)}"
 
 header = PostHeader.new({
-  name: name,
-  time: time
+  title: name,
+  date: time.strftime('%Y-%m-%d %X')
 })
 
 exhibition = Exhibition.new({

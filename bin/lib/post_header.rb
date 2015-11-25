@@ -1,17 +1,17 @@
 class PostHeader
 
-  attr_accessor :name, :time
+  attr_accessor :title, :date
 
-  def initialize name:, time:
-    @name = name
-    @time = time
+  def initialize title:, date:
+    @title = title
+    @date = date
   end
 
   def to_s
     <<-HEAD
 ---
-title: #{name.inspect}
-date: #{time.strftime('%Y-%m-%d %X')}
+title: #{title}
+date: #{date}
 ---
     HEAD
   end
