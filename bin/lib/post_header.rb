@@ -1,17 +1,15 @@
 class PostHeader
 
-  attr_accessor :title, :date
+  attr_accessor :data
 
-  def initialize title:, date:
-    @title = title
-    @date = date
+  def initialize data = {}
+    @data = data
   end
 
   def to_s
     <<-HEAD
 ---
-title: #{title}
-date: #{date}
+#{data.map {|k, v| "#{k}: #{v}"}.join("\n")}
 ---
     HEAD
   end
