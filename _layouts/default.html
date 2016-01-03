@@ -23,19 +23,17 @@
           <div class="description">
             <div class="title">
               <label>Currently showing</label>
-              Numismatics
               {{ site.posts.first.title }}
             </div>
 
             <div class="artist">
               <label>by</label>
-              Jason Huff
               {{ site.posts.first.artist }}
             </div>
 
             <div class="duration">
               <label>on</label>
-              January 1 &ndash; {{ site.posts.first.end_date | date: "%B %-d, %Y" }}
+              {{ site.posts.first.date | date: "%B %-d" }} &ndash; {{ site.posts.first.end_date | date: "%B %-d, %Y" }}
             </div>
 
             <div class="site-description">
