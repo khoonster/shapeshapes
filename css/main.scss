@@ -160,11 +160,15 @@ body {
     }
   }
 
-  .email {
+  .email-field {
     position: absolute;
     right: 38px * 4;
     bottom: 0;
     left: 0;
+  }
+
+  .email {
+    width: 100%;
   }
 
   .button {
